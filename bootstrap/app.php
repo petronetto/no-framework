@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
-error_reporting(E_ALL);
+require_once __DIR__ . '/../vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
-| Create the Application
+| Boostrap the Application
 |--------------------------------------------------------------------------
 |
 | First we need to get an application instance. This creates an instance
@@ -15,6 +13,6 @@ error_reporting(E_ALL);
 |
 */
 
-$app = require_once __DIR__ . '/../bootstrap/app.php';
+$app = new Petronetto\Application();
 
-$app->run();
+return $app;

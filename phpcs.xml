@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Petronetto's rules set">
+<description>Petronetto's Custom PSR-2 based ruleset</description>
+
+<rule ref="PSR2"></rule>
+<exclude-pattern>*/tests/*</exclude-pattern>
+<exclude-pattern>*/vendor/*</exclude-pattern>
+<exclude-pattern>*/database/*</exclude-pattern>
+
+<arg name="colors"/>
+<arg value="sp"/>
+
+<autoload>vendor/autoload.php</autoload>
+<rule ref="Generic.Classes.DuplicateClassName"/>
+<rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+<rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
+<rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
+<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+<rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
+<rule ref="Generic.Commenting.Todo"/>
+<rule ref="Generic.Commenting.Todo.CommentFound">
+    <message>Please review this TODO comment: %s</message>
+    <severity>3</severity>
+</rule>
+<rule ref="Generic.Commenting.Fixme"/>
+<rule ref="Generic.Commenting.Fixme.CommentFound">
+    <message>Please review this FIXME comment: %s</message>
+    <severity>3</severity>
+</rule>
+<rule ref="Generic.Files.ByteOrderMark"/>
+<rule ref="Generic.Files.LineEndings"/>
+<rule ref="Generic.Files.LineLength">
+    <properties>
+        <property name="lineLimit" value="120"/>
+        <property name="absoluteLineLimit" value="150"/>
+    </properties>
+</rule>
+<rule ref="Generic.Formatting.SpaceAfterCast"/>
+<rule ref="Generic.Functions.CallTimePassByReference"/>
+<rule ref="Generic.Metrics.CyclomaticComplexity"/>
+<rule ref="Generic.Metrics.NestingLevel">
+    <properties>
+        <property name="nestingLevel" value="2"/>
+        <property name="absoluteNestingLevel" value="3"/>
+    </properties>
+</rule>
+<rule ref="Generic.NamingConventions.ConstructorName"/>
+<rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+<rule ref="Generic.NamingConventions.CamelCapsFunctionName"/>
+<rule ref="Generic.PHP.DeprecatedFunctions"/>
+<rule ref="Generic.PHP.DisallowShortOpenTag"/>
+<rule ref="Generic.PHP.ForbiddenFunctions"/>
+<rule ref="Generic.PHP.LowerCaseConstant"/>
+<rule ref="Generic.PHP.NoSilencedErrors"/>
+<rule ref="Generic.Strings.UnnecessaryStringConcat">
+    <properties>
+        <property name="error" value="false"/>
+    </properties>
+</rule>
+<rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
+<rule ref="Generic.WhiteSpace.ScopeIndent"/>
+<rule ref="PEAR.Classes.ClassDeclaration"/>
+<rule ref="PEAR.Commenting.InlineComment"/>
+<rule ref="PEAR.Functions.FunctionDeclaration"/>
+<rule ref="PEAR.Functions.ValidDefaultValue"/>
+<rule ref="PEAR.NamingConventions.ValidClassName"/>
+<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent"/>
+<rule ref="PEAR.WhiteSpace.ScopeClosingBrace"/>
+</ruleset>

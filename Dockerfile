@@ -2,8 +2,10 @@ FROM alpine:3.7
 
 LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
 
+
 ENV BUILD_DEPS="autoconf g++ make php7-dev openssl-dev php7-pear tzdata" \
-    TIMEZONE="America/Sao_Paulo" \
+    LC_ALL=en_US.UTF-8 \
+    LANG=en_US.UTF-8 \
 # XDebug configs
     XDEBUG_ENABLE=0 \
     XDEBUG_REMOTE_PORT=9000 \
@@ -65,17 +67,20 @@ RUN set -ex; \
     apk add --no-cache --virtual .build-deps ${BUILD_DEPS}; \
     apk add --no-cache \
         curl \
+        bash \
         ca-certificates \
         openssl \
         php7 \
         php7-dom \
         php7-fpm \
+        php7-cgi \
         php7-mbstring \
         php7-mcrypt \
         php7-opcache \
         php7-pdo \
-        php7-fileinfo \
+        php7-pdo_pgsql \
         php7-pdo_sqlite \
+        php7-fileinfo \
         php7-xml \
         php7-simplexml \
         php7-xmlreader \
@@ -90,8 +95,8 @@ RUN set -ex; \
         php7-tokenizer \
         php7-xdebug; \
 # Configuring timezones
-    cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime; \
-    echo ${TIMEZONE} > /etc/timezone; \
+    cp /usr/share/zoneinfo/Etc/UTC /etc/localtime; \
+    echo "UTC" | tee /etc/timezone; \
 # install PHP driver for mongodb
     pecl install -f mongodb; \
     echo 'extension=mongodb.so' > /etc/php7/conf.d/00_mongodb.ini; \
@@ -120,7 +125,7 @@ WORKDIR /app
 
 # The container shouldn't run as root, it can be a potential
 # security issue, obviously, depending the enviroment
-# but to ensure the security we will not run as root
+# but to ensure the security, we aren't going to run as root.
 USER www-data
 
 CMD ["/usr/sbin/php-fpm7"]

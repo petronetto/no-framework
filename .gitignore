@@ -129,3 +129,4 @@ tags
 *.log
 *.sock
 .env
+tmp

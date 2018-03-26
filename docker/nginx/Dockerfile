@@ -18,6 +18,9 @@ RUN set -ex; \
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 
+RUN procs=$(cat /proc/cpuinfo | grep processor | wc -l) && \
+    sed -i -e "s/worker_processes 4/worker_processes $procs/" /etc/nginx/nginx.conf
+
 WORKDIR /app
 
 USER nginx

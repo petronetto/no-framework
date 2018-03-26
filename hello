@@ -1,0 +1,160 @@
+#!/bin/bash
+
+APP_CONTAINER_NAME=hellofresh.api
+SWAGGER_CONTAINER_NAME=hellofresh.swagger
+SWAGGER_CONTAINER_NAME=hellofresh.swagger
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+RESET=`tput sgr0`
+
+function print_header {
+    echo "==================================================="
+    echo "|${GREEN}     _____     _ _     _____             _       ${RESET}|"
+    echo "|${GREEN}    |  |  |___| | |___|   __|___ ___ ___| |_     ${RESET}|"
+    echo "|${GREEN}    |     | -_| | | . |   __|  _| -_|_ -|   |    ${RESET}|"
+    echo "|${GREEN}    |__|__|___|_|_|___|__|  |_| |___|___|_|_|    ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "==================================================="
+}
+
+function help() {
+    printf "\n\n\n"
+    print_header
+    echo "==================================================="
+    echo "|   Available options                             |"
+    echo "==================================================="
+    echo "|${GREEN}    app [params]                                 ${RESET}|"
+    echo "|${GREEN}    up                                           ${RESET}|"
+    echo "|${GREEN}    migrate                                      ${RESET}|"
+    echo "|${GREEN}    rollback                                     ${RESET}|"
+    echo "|${GREEN}    seed                                         ${RESET}|"
+    echo "|${GREEN}    tests [optional params]                      ${RESET}|"
+    echo "|                                                 |"
+    echo "==================================================="
+    echo "|   Available endpoints                           |"
+    echo "==================================================="
+    echo "|${GREEN}    API            -> http://localhost:8080      ${RESET}|"
+    echo "|${GREEN}    API Docs       -> http://localhost:3000      ${RESET}|"
+    echo "|${GREEN}    Sonar Qube     -> http://localhost:9000      ${RESET}|"
+    echo "==================================================="
+    printf "\n\n\n"
+}
+
+function print_info {
+    printf "\n\n\n"
+    echo "***************************************************"
+    echo "${GREEN}$@${RESET}"
+    echo "***************************************************"
+    printf "\n\n\n"
+}
+
+function print_error {
+    printf "\n\n\n"
+    echo "***************************************************"
+    echo "${RED}$@${RESET}"
+    echo "***************************************************"
+    printf "\n\n\n"
+}
+
+function check_params {
+    if [[ -z "${@: -$# + 1}" ]];
+    then
+        print_error "No arguments supplied"
+        exit 1
+    fi
+}
+
+function run_inside_docker {
+    shift
+    check_params $@
+    docker exec -it ${APP_CONTAINER_NAME} $@
+    exit 0
+}
+
+function run_tests {
+    run_inside_docker vendor/bin/phpunit --colors=always $@
+    exit 0
+}
+
+function create_docker_network {
+    if [ "$(docker network ls --format {{.Name}} | grep hello)" = "" ];
+    then
+        docker network create hello
+    fi
+}
+
+function up {
+    shift
+    check_params $@ 1
+    create_docker_network
+    if [ ! -d vendor ];
+    then
+        print_info "Installing project dependencies"
+        composer install -o --ignore-platform-reqs
+    fi
+
+    docker-compose -f docker-compose.yml up -d $@
+    exit 0
+}
+
+case $1 in
+"app")
+    run_inside_docker $@
+    ;;
+"tests")
+    run_tests $@
+    ;;
+"migrate")
+    run_inside_docker php vendor/bin/phinx migrate -c database/phinx.php
+    exit 0
+    ;;
+"seed")
+    run_inside_docker php vendor/bin/phinx seed:run -c database/phinx.php
+    exit 0
+    ;;
+"rollback")
+    run_inside_docker php vendor/bin/phinx rollback -c database/phinx.php
+    exit 0
+    ;;
+"docs")
+    set -ex;
+    if [ ! -f swagger.json ]; then \
+        touch swagger.json; \
+    fi; \
+    docker exec -it $APP_CONTAINER_NAME \
+        ./vendor/bin/swagger ./ \
+        --output ./;
+        docker restart $SWAGGER_CONTAINER_NAME;
+    exit 0
+    ;;
+"sonar-runner")
+    docker exec -it hellofresh.sonarqube sonar-runner
+    exit 0
+    ;;
+"phpcs")
+    if [[ $2 = "--report" ]];
+    then
+        vendor/bin/phpcs --extensions=php \
+            --report-file=tests/coverage/phpcs.xml --report=xml \
+            --standard=phpcs.xml ./
+        exit 0
+    fi
+    vendor/bin/phpcs --extensions=php \
+        --standard=phpcs.xml ./
+    exit 0
+    ;;
+"up")
+    up $@
+    exit 0
+    ;;
+"text")
+    pretty_print $@
+    exit 0
+    ;;
+*)
+    help
+    exit 1
+    ;;
+esac
+
+exit 0
