@@ -6,7 +6,10 @@ namespace HelloFresh\Services;
 
 use HelloFresh\Models\Recipe;
 use HelloFresh\Transformers\RecipeTransformer;
+use League\Fractal\Manager as Fractal;
+use League\Fractal\Resource\Item;
 use Petronetto\Cache\CacheManager as Cache;
+use Petronetto\Exceptions\NotFoundHttpException;
 use Petronetto\Http\Paginator;
 
 class RecipeService extends AbstractService
@@ -42,6 +45,12 @@ class RecipeService extends AbstractService
      */
     public function paginate(int $currentPage, int $perPage): array
     {
+        $cacheKey = "recipes_page_{$currentPage}_per_page_{$perPage}";
+
+        if ($cached = $this->cache->get($cacheKey)) {
+            return $cached;
+        }
+
         $query = $this->model->query();
         $total = $query->count();
         $query->skip(($currentPage - 1) * $perPage);
@@ -56,15 +65,7 @@ class RecipeService extends AbstractService
             new RecipeTransformer()
         );
 
-        $cacheKey = md5(serialize($recipes));
-
-        if ($cached = $this->cache->get($cacheKey)) {
-            $recipes = unserialize($cached);
-
-            return $recipes;
-        }
-
-        $this->cache->set($cacheKey, serialize($recipes));
+        $this->cache->set($cacheKey, $recipes);
 
         return $recipes;
     }
@@ -74,9 +75,8 @@ class RecipeService extends AbstractService
         return $this->model->all();
     }
 
-    public function create(array $data)
+    public function create(array $data):array
     {
-        //
     }
 
     public function delete($id)
@@ -84,9 +84,30 @@ class RecipeService extends AbstractService
         //
     }
 
-    public function getById($id)
+    public function getById(int $id): array
     {
-        //
+        $cacheKey = "recipe_{$id}";
+
+        if ($cached = $this->cache->get($cacheKey)) {
+            return $cached;
+        }
+
+        $recipe = $this->model->find($id);
+
+        if (!$recipe) {
+            throw new NotFoundHttpException();
+        }
+
+        $recipe = (new Fractal())->createData(
+            new Item(
+                $recipe->toArray(),
+                new RecipeTransformer()
+            )
+        )->toArray();
+
+        $this->cache->set($cacheKey, $recipe);
+
+        return $recipe;
     }
 
     public function update($id, array $data)

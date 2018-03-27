@@ -9,9 +9,10 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-
 use FastRoute\RouteCollector;
-use function FastRoute\simpleDispatcher;
+use FastRoute\RouteParser\Std;
+use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
+use FastRoute\Dispatcher\GroupCountBased;
 
 class Application
 {
@@ -33,7 +34,7 @@ class Application
     {
         $this->bootErrorHandler();
         $this->config            = Config::getInstance();
-        $this->dispatcher        = $this->getDispatcher();
+        $this->dispatcher        = $this->dispatcher();
         $this->container         = $this->getContainer();
     }
 
@@ -60,27 +61,56 @@ class Application
         }
     }
 
-    // public function getDispatcher(): Dispatcher
-    // {
-    //     return \FastRoute\simpleDispatcher(
-    //         require __DIR__ . '/../routes/api.php'
-    //     );
-    // }
-
-    public function getDispatcher()
+    /**
+     * Get the dispatcher
+     *
+     * @return Dispatcher
+     */
+    private function dispatcher()
     {
-        $routes = $this->config->get('routes');
+        $routeCollector = new RouteCollector(new Std(), new DataGenerator());
 
-        $dispatcher = simpleDispatcher(function (RouteCollector $r) use ($routes) {
+        $routes = $this->normalizeRouteParams(
+            $this->config->get('routes')
+        );
+
+        $routeDefinitionCallback = function (RouteCollector $router) use ($routes) {
             foreach ($routes as $route) {
-                dd([
-                    'route' => $route,
-                    'key' => $key,
-                ]);
+                $router->addRoute($route['methods'], $route['path'], $route['handler']);
             }
-        });
+        };
 
-        return $dispatcher;
+        $routeDefinitionCallback($routeCollector);
+
+        return new GroupCountBased($routeCollector->getData());
+    }
+
+    public function normalizeRouteParams(array $routes): array
+    {
+        foreach ($routes as $key => $route) {
+            if (!isset($route['methods'])
+                || !isset($route['handler'])
+                || !isset($route['path'])) {
+                // TODO: Create a dedicated Exception
+                throw new \Exception('Invalid Route Parameters', 400);
+            }
+
+            if (!is_array($route['methods'])) {
+                $route['methods'] = [$route['methods']];
+            }
+
+            if (!isset($route['middlewares'])) {
+                $route['middlewares'] = [];
+            }
+
+            if (!is_array($route['middlewares'])) {
+                $route['middlewares'] = [$route['middlewares']];
+            }
+
+            $routes[$key] = $route;
+        }
+
+        return $routes;
     }
 
     /**

@@ -35,7 +35,7 @@ services:
       - ./sock:/sock
       - ./log/nginx:/var/log/nginx
     ports:
-      - 8080:8080
+      - 9999:8080
     networks:
       - hello
 #---------------------------------------------
@@ -62,7 +62,7 @@ services:
     image: mvertes/alpine-mongo:3.2.3
     restart: unless-stopped
     ports:
-      - 27017:27017
+      - 27018:27017
     networks:
       - hello
 #---------------------------------------------
@@ -86,7 +86,7 @@ services:
     image: swaggerapi/swagger-ui
     restart: unless-stopped
     ports:
-      - 3000:8080
+      - 4000:8080
     environment:
       SWAGGER_JSON: "/data/swagger.json"
     links:

@@ -6,5 +6,4 @@ namespace Petronetto\Exceptions;
 
 class BaseException extends \Exception
 {
-    //
 }

@@ -7,21 +7,20 @@ namespace HelloFresh\Controllers\Recipes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class GetRecipes extends RecipesBaseController
+class CreateRecipe extends RecipesBaseController
 {
     /**
-     * Get the pagineted Recipes.
+     * Create a new Recipe
      *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
+     * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $recipes = $this->service->paginate(
-            $this->getCurrentPage($request),
-            $this->getPageSize($request)
-        );
+        $data = json_decode($request->getBody()->getContents());
+        // FIXME: Remove
+        dd($data->name);
+        $recipes = $this->service->create($request);
 
         return $this->json($recipes, 206);
     }

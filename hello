@@ -23,12 +23,24 @@ function help() {
     echo "==================================================="
     echo "|   Available options                             |"
     echo "==================================================="
-    echo "|${GREEN}    app [params]                                 ${RESET}|"
-    echo "|${GREEN}    up                                           ${RESET}|"
-    echo "|${GREEN}    migrate                                      ${RESET}|"
-    echo "|${GREEN}    rollback                                     ${RESET}|"
-    echo "|${GREEN}    seed                                         ${RESET}|"
-    echo "|${GREEN}    tests [optional params]                      ${RESET}|"
+    echo "|${GREEN}  * app [params]                                 ${RESET}|"
+    echo "|${RESET}  Run a command inside docker container          ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * up  [--migrate --seed]                       ${RESET}|"
+    echo "|${RESET}  Build containers. Additionally you can run     ${RESET}|"
+    echo "|${RESET}  the migrations and seeders                     ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * migrate                                      ${RESET}|"
+    echo "|${RESET}  Run the database migrations                    ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * seed                                         ${RESET}|"
+    echo "|${RESET}  Run the database seeders                       ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * rollback                                     ${RESET}|"
+    echo "|${RESET}  Rollback the database                          ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * tests [optional params]                      ${RESET}|"
+    echo "|${RESET}  Run the unit tests                             ${RESET}|"
     echo "|                                                 |"
     echo "==================================================="
     echo "|   Available endpoints                           |"
@@ -68,12 +80,22 @@ function run_inside_docker {
     shift
     check_params $@
     docker exec -it ${APP_CONTAINER_NAME} $@
-    exit 0
+}
+
+function migrate {
+    run_inside_docker php vendor/bin/phinx migrate -c database/phinx.php
+}
+
+function seed {
+    run_inside_docker php vendor/bin/phinx seed:run -c database/phinx.php
+}
+
+function rollback {
+    run_inside_docker php vendor/bin/phinx rollback -c database/phinx.php
 }
 
 function run_tests {
     run_inside_docker vendor/bin/phpunit --colors=always $@
-    exit 0
 }
 
 function create_docker_network {
@@ -85,7 +107,6 @@ function create_docker_network {
 
 function up {
     shift
-    check_params $@ 1
     create_docker_network
     if [ ! -d vendor ];
     then
@@ -93,27 +114,46 @@ function up {
         composer install -o --ignore-platform-reqs
     fi
 
-    docker-compose -f docker-compose.yml up -d $@
-    exit 0
+    print_info "Running containers"
+    docker-compose -f docker-compose.yml up -d
+
+    if [ $# -eq 0 ]
+    then
+        exit 0
+    fi
+
+    if [ $1 == "--migrate" ] || [ $2 == '--migrate' ]
+    then
+        print_info "Migrating database"
+        migrate
+    fi
+
+    if [ $1 == "--seed" ] || [ $2 == '--seed' ]
+    then
+        print_info "Seeding database"
+        seed
+    fi
 }
 
 case $1 in
 "app")
     run_inside_docker $@
+    exit 0
     ;;
 "tests")
     run_tests $@
+    exit 0
     ;;
 "migrate")
-    run_inside_docker php vendor/bin/phinx migrate -c database/phinx.php
+    migrate
     exit 0
     ;;
 "seed")
-    run_inside_docker php vendor/bin/phinx seed:run -c database/phinx.php
+    seed
     exit 0
     ;;
 "rollback")
-    run_inside_docker php vendor/bin/phinx rollback -c database/phinx.php
+    rollback
     exit 0
     ;;
 "docs")

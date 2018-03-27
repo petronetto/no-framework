@@ -13,7 +13,6 @@ class Eloquent extends Model implements ORMInterface
     public function __construct()
     {
         $this->initialize();
-        parent::__construct();
     }
 
     /**

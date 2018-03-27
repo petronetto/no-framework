@@ -4,18 +4,11 @@ declare(strict_types=1);
 
 namespace Petronetto\Http;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
 
 abstract class AbstractController implements ControllerInterface
 {
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response
-    ): ResponseInterface {
-    }
-
     /**
      * Get the current in query string
      * or return a default value.

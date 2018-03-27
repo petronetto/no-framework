@@ -12,7 +12,7 @@ interface ServiceInterface
 
     public function delete($id);
 
-    public function getById($id);
+    public function getById(int $id): array;
 
     public function update($id, array $data);
 

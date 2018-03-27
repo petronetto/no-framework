@@ -2,25 +2,26 @@
 
 return [
     [
-        'methods'    => ['GET'],
-        'path'       => '/recipes',
-        'handlers'   => HelloFresh\Controllers\Recipes\GetRecipes::class,
-        'middleware' => null
+        'methods'     => ['GET'],
+        'path'        => '/recipes',
+        'handler'     => HelloFresh\Controllers\Recipes\GetRecipes::class,
     ],
     [
-        'methods'    => ['GET'],
-        'path'       => '/info',
-        'handlers'   => function () {
-            phpinfo();
-        },
-        'middleware' => null
+        'methods'     => ['GET'],
+        'path'        => '/recipes/{id}',
+        'handler'     => HelloFresh\Controllers\Recipes\GetRecipe::class
     ],
     [
-        'methods'    => ['GET', 'POST'],
-        'path'       => '/postinfo',
-        'handlers'   => function () {
+        'methods'     => ['POST'],
+        'path'        => '/recipes',
+        'handler'     => HelloFresh\Controllers\Recipes\CreateRecipe::class
+    ],
+    [
+        'methods'     => ['GET'],
+        'path'        => '/postinfo',
+        'handler'     => function () {
             phpinfo();
         },
-        'middleware' => null
+        'middlewares' => null
     ],
 ];
