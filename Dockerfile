@@ -110,6 +110,8 @@ RUN set -ex; \
     curl -LOk http://download.newrelic.com/php_agent/release/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz; \
     gzip -dc newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz | tar xf -;\
     ./newrelic-php5-${NEWRELIC_VERSION}-linux-musl/newrelic-install install;\
+# Installing Composer
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer; \
 # Compying PHP config files
     cp -a /app/docker/php/php.ini /etc/php7/php.ini; \
     cp -a /app/docker/php/www.conf /etc/php7/php-fpm.d/www.conf; \

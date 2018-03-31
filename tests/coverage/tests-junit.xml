@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-  <testsuite name="Application Test Suite" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.016399">
-    <testsuite name="ApplicationTest" file="/Users/petronetto/Code/petronetto-api-test/tests/ApplicationTest.php" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.016399">
-      <testcase name="testApplicationInstance" class="ApplicationTest" classname="ApplicationTest" file="/Users/petronetto/Code/petronetto-api-test/tests/ApplicationTest.php" line="7" assertions="2" time="0.016399"/>
-    </testsuite>
-  </testsuite>
-</testsuites>

@@ -24,31 +24,24 @@ use Zend\Stratigility\Middleware\ErrorHandler;
 use Zend\Stratigility\MiddlewarePipe;
 use function Zend\Stratigility\middleware;
 
-class Application
+class Router
 {
     /** @var ContainerInterface */
-    private $container;
+    private $request;
 
     /** @var Config */
-    private $config;
-
-    /** @var Dispatcher */
-    private $dispatcher;
-
-    /** @var array */
-    private $routeMiddlawares = [];
+    private $response;
 
     /**
      * Application constructor.
      *
      * @param ContainerInterface $container
      */
-    public function __construct()
+    public function __construct(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
-        $this->bootErrorHandler();
-        $this->config            = Config::getInstance();
-        $this->dispatcher        = $this->dispatcher();
-        $this->container         = $this->getContainer();
+        // $this->request
+        // $this->response        = $this->dispatcher();
+        $this->response = Config::getInstance();
     }
 
     /**
@@ -188,11 +181,8 @@ class Application
                 ], 405);
             }
 
-            $router[2] = [
-                'request' => $request,
-                'handler' => $handler,
-            ];
-
+            $router[2]['request'] = $request;
+            $router[2]['handler'] = $handler;
             // TODO: Check route middleware
             $response = $this->container->call($router[1], $router[2]);
 

@@ -6,6 +6,7 @@ namespace HelloFresh\Controllers\Recipes;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use HelloFresh\Models\Recipe;
 
 class CreateRecipe extends RecipesBaseController
 {
@@ -17,11 +18,10 @@ class CreateRecipe extends RecipesBaseController
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $data = json_decode($request->getBody()->getContents());
-        // FIXME: Remove
-        dd($data->name);
-        $recipes = $this->service->create($request);
+        $data = $this->parseRequestDataToArray($request);
 
-        return $this->json($recipes, 206);
+        $recipe = $this->service->create($data);
+
+        return $this->json($recipe, 201);
     }
 }

@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Petronetto\Exceptions;
 
 use Exception;
-use PDOException;
 use Respect\Validation\Exceptions\NestedValidationException;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Response\EmptyResponse;
 
 class ExceptionHandler
 {
@@ -18,12 +17,6 @@ class ExceptionHandler
      */
     public static function handler(Exception $e)
     {
-        if ($e instanceof PDOException) {
-            return self::json([
-                'message' => sprintf('Database encountered some problems and returned %s', $e->getCode()),
-            ], 500);
-        }
-
         if ($e instanceof UnauthorizedException) {
             return self::json(null, 401);
         }
@@ -48,7 +41,7 @@ class ExceptionHandler
     private static function json($data = [], $code = 200)
     {
         if (empty($data)) {
-            return new Response(null, $code);
+            return new EmptyResponse();
         }
 
         return new JsonResponse($data, $code);

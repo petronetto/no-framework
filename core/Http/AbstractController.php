@@ -10,8 +10,19 @@ use Zend\Diactoros\Response\JsonResponse;
 abstract class AbstractController implements ControllerInterface
 {
     /**
+     * Parse the data to array
+     *
+     * @param  ServerRequestInterface $request
+     * @return array
+     */
+    public function parseRequestDataToArray(ServerRequestInterface $request): ?array
+    {
+        return json_decode($request->getBody()->getContents(), true);
+    }
+
+    /**
      * Get the current in query string
-     * or return a default value.
+     * or return a default value
      *
      * @param  ServerRequestInterface $request
      * @return int
@@ -42,14 +53,15 @@ abstract class AbstractController implements ControllerInterface
     }
 
     /**
-     * Send response as json.
+     * Send response as json
      *
-     * @param  array        $data
+     * @param  array        $content
      * @param  int          $code
+     * @param  array        $headers
      * @return JsonResponse
      */
-    protected function json(array $data, int $code = 200): JsonResponse
+    protected function json(array $content, int $code = 200, array $headers = []): JsonResponse
     {
-        return new JsonResponse($data, $code);
+        return new JsonResponse($content, $code, $headers);
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\PostgresAdapter;
@@ -17,7 +19,8 @@ class RecipesMigration extends AbstractMigration
                 ->addColumn('prep_time', 'integer', ['limit' => PostgresAdapter::INT_SMALL])
                 ->addColumn('difficulty', 'integer', ['limit' => PostgresAdapter::INT_SMALL])
                 ->addColumn('vegetarian', 'boolean', ['default' => false, 'null' => true])
-                // ->addTimestamps()
+                ->addColumn('created_at', 'datetime', ['null' => true])
+                ->addColumn('updated_at', 'datetime', ['null' => true])
                 ->save();
     }
 

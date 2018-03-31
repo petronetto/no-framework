@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Petronetto\Cache;
+namespace HelloFresh\Services;
 
 use Predis\Client as Redis;
 
-class CacheManager
+class CacheService
 {
     /** @var \Predis\Client  */
     protected $client;
@@ -47,5 +47,27 @@ class CacheManager
             $ttl = (int) config()->get('redis.ttl');
         }
         $this->client->expire($key, $ttl);
+    }
+
+    /**
+     * Get keys by pattern
+     *
+     * @param  array $pattern
+     * @return array
+     */
+    public function keys($pattern): array
+    {
+        return $this->client->keys($pattern);
+    }
+
+    /**
+     * Delete by keys
+     *
+     * @param  array $keys
+     * @return void
+     */
+    public function del(array ...$keys): void
+    {
+        $this->client->del(...$keys);
     }
 }

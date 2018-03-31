@@ -6,6 +6,7 @@ namespace HelloFresh\Controllers\Recipes;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class GetRecipes extends RecipesBaseController
 {
@@ -16,8 +17,10 @@ class GetRecipes extends RecipesBaseController
      * @param  ResponseInterface      $response
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request): ResponseInterface
-    {
+    public function __invoke(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
         $recipes = $this->service->paginate(
             $this->getCurrentPage($request),
             $this->getPageSize($request)

@@ -8,5 +8,6 @@ return [
     'port'     => getenv('REDIS_PORT'),
     'user'     => getenv('REDIS_USER'),
     'password' => getenv('REDIS_PASS'),
-    'ttl'      => getenv('REDIS_TTL') ?: (60 * 60 * 24),
+    'ttl'      => 0,
+    // 'ttl'      => getenv('REDIS_TTL') ?: (60 * 60 * 24),
 ];

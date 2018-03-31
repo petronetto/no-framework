@@ -12,10 +12,10 @@ class NotFoundHttpException extends BaseException
      */
     public function __construct(string $message = null, Exception $previous = null)
     {
-        if (!$message) {
-            $message = 'Resource not found';
-        }
+        // if (!$message) {
+        //     $message = 'Resource not found';
+        // }
 
-        parent::__construct($message, 404, $previous);
+        // parent::__construct($message, 404, $previous);
     }
 }

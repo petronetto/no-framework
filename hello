@@ -77,7 +77,6 @@ function check_params {
 }
 
 function run_inside_docker {
-    shift
     check_params $@
     docker exec -it ${APP_CONTAINER_NAME} $@
 }
@@ -91,7 +90,7 @@ function seed {
 }
 
 function rollback {
-    run_inside_docker php vendor/bin/phinx rollback -c database/phinx.php
+    run_inside_docker php vendor/bin/phinx rollback -c database/phinx.php -t 0
 }
 
 function run_tests {
@@ -137,10 +136,12 @@ function up {
 
 case $1 in
 "app")
+    shift
     run_inside_docker $@
     exit 0
     ;;
 "tests")
+    shift
     run_tests $@
     exit 0
     ;;
@@ -161,7 +162,7 @@ case $1 in
     if [ ! -f swagger.json ]; then \
         touch swagger.json; \
     fi; \
-    docker exec -it $APP_CONTAINER_NAME \
+    run_inside_docker \
         ./vendor/bin/swagger ./ \
         --output ./;
         docker restart $SWAGGER_CONTAINER_NAME;

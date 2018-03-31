@@ -5,6 +5,7 @@ return [
         'methods'     => ['GET'],
         'path'        => '/recipes',
         'handler'     => HelloFresh\Controllers\Recipes\GetRecipes::class,
+        'middlewares' => HelloFresh\Middlewares\ResponseTime::class,
     ],
     [
         'methods'     => ['GET'],

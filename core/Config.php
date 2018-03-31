@@ -64,6 +64,7 @@ class Config
         if (!isset(self::$instance)) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
 

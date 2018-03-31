@@ -13,11 +13,12 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Paginator
 {
+    /** @var ServerRequestInterface */
     private $request;
 
-    public function __construct(ServerRequestInterface $req)
+    public function __construct(ServerRequestInterface $request)
     {
-        $this->request = $req;
+        $this->request = $request;
     }
 
     /**
