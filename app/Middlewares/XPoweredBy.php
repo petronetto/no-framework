@@ -2,14 +2,12 @@
 
 namespace HelloFresh\Middlewares;
 
-use Petronetto\Config;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\JsonResponse;
 
-class CorsMiddleware implements MiddlewareInterface
+class XPoweredBy implements MiddlewareInterface
 {
     /**
      * @param  ServerRequestInterface  $request
@@ -20,18 +18,6 @@ class CorsMiddleware implements MiddlewareInterface
     {
         $response  = $handler->handle($request);
 
-        $headers = Config::getInstance()->get('cors');
-
-        if ($request->getMethod() === 'OPTIONS') {
-            return new JsonResponse([
-                'method' => 'OPTIONS'
-            ], 200, $headers);
-        }
-
-        foreach ($headers as $key => $value) {
-            $response = $response->withHeader($key, $value);
-        }
-
-        return $response;
+        return $response->withHeader('X-Powered-By', 'Juliano Petronetto');
     }
 }

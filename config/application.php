@@ -18,6 +18,7 @@ return [
         if (in_array($appEnv, $prodNames)) {
             return true;
         }
+
         return false;
     })(),
 ];

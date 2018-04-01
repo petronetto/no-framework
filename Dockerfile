@@ -2,7 +2,6 @@ FROM alpine:3.7
 
 LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
 
-
 ENV BUILD_DEPS="autoconf g++ make php7-dev openssl-dev php7-pear tzdata" \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \

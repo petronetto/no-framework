@@ -16,14 +16,7 @@ use Petronetto\Http\AbstractController;
  *         title="HelloFresh Recipes API",
  *         description="HelloFresh Recipes API - By Juliano Petronetto",
  *         @SWG\Contact(name="Juliano Petronetto", url="http://petronetto.com.br"),
- *     ),
- *     @SWG\Definition(
- *         definition="Error",
- *         description="",
- *         type="object",
- *         @SWG\Property(property="error", type="string"),
- *         @SWG\Property(property="code", type="integer")
- *     ),
+ *     )
  * )
  */
 class Controller extends AbstractController

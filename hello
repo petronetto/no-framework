@@ -123,6 +123,7 @@ function up {
 
     if [ $1 == "--migrate" ] || [ $2 == '--migrate' ]
     then
+        sleep 5 # Giving some time to Postgres container be ready
         print_info "Migrating database"
         migrate
     fi
@@ -158,12 +159,8 @@ case $1 in
     exit 0
     ;;
 "docs")
-    set -ex;
-    if [ ! -f swagger.json ]; then \
-        touch swagger.json; \
-    fi; \
     run_inside_docker \
-        ./vendor/bin/swagger ./ \
+        ./vendor/bin/swagger ./app \
         --output ./;
         docker restart $SWAGGER_CONTAINER_NAME;
     exit 0

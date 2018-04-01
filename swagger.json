@@ -1,0 +1,99 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "HelloFresh Recipes API",
+        "description": "HelloFresh Recipes API - By Juliano Petronetto",
+        "contact": {
+            "name": "Juliano Petronetto",
+            "url": "http://petronetto.com.br"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "paths": {
+        "/recipes": {
+            "get": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Get All Articles paginated",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The result page",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "The page size",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "206": {
+                        "description": "A paginated array of Articles",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Recipe"
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Recipe": {
+            "properties": {
+                "name": {
+                    "description": "Class Recipe",
+                    "type": "string",
+                    "example": "Lorem ipsum"
+                },
+                "prep_time": {
+                    "description": "Class Recipe",
+                    "type": "integer",
+                    "example": 3
+                },
+                "difficulty": {
+                    "description": "Class Recipe",
+                    "type": "integer",
+                    "example": 60
+                },
+                "vegetarian": {
+                    "description": "Class Recipe",
+                    "type": "boolean",
+                    "example": true
+                },
+                "rating": {
+                    "description": "Class Recipe",
+                    "type": "float",
+                    "example": 4.7
+                }
+            },
+            "type": "object"
+        }
+    }
+}

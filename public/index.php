@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 error_reporting(E_ALL);
 
+// header("Access-Control-Allow-Origin: *");
+
 /*
 |--------------------------------------------------------------------------
 | Create the Application
