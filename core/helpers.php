@@ -50,6 +50,18 @@ if (!function_exists('request')) {
     }
 }
 
+if (!function_exists('isProd')) {
+    /**
+     * Returns if application is running under prod env.
+     *
+     * @return bool
+     */
+    function isProd(): bool
+    {
+        return (bool) config()->get('application.prod');
+    }
+}
+
 if (!function_exists('dd')) {
     /**
      * Dump the passed variables and end the script.

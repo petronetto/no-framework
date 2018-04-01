@@ -8,19 +8,13 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Petronetto\Config;
 use Predis\Client as Redis;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\Stratigility\MiddlewarePipe;
 
 return [
-    ContainerInterface::class => \DI\factory(function (ContainerInterface $container) {
-        return $container;
-    }),
     'emitter'  => DI\create(SapiEmitter::class),
     'response' => DI\create(Response::class),
     'request'  => function () {
@@ -32,25 +26,23 @@ return [
             $_FILES
         );
     },
-    ServerRequestInterface::class   => DI\get('request'),
-    RequestHandlerInterface::class  => DI\create(MiddlewarePipe::class),
-    LoggerInterface::class          => function () {
-        $appName   = config()->get('application.name');
-        $logDir    = config()->get('application.logdir');
-        $logger    = new Logger($appName);
-        $handler   = new RotatingFileHandler(
-            "{$logDir}/{$appName}.log",
-            10,
-            Logger::DEBUG
-        );
-        $format    = "[%datetime%]\n%channel%.%level_name%: %message% %context%\n";
-        $formatter = new LineFormatter($format, null, true, true);
-        $handler->setFormatter($formatter);
-        $logger->pushHandler($handler);
-        ErrorHandler::register($logger);
+    // 'logger'                        => function () {
+    //     $appName   = config()->get('application.name');
+    //     $logDir    = config()->get('application.logdir');
+    //     $logger    = new Logger($appName);
+    //     $handler   = new RotatingFileHandler(
+    //         "{$logDir}/{$appName}.log",
+    //         10,
+    //         Logger::DEBUG
+    //     );
+    //     $format    = "[%datetime%]\n%channel%.%level_name%: %message% %context%\n";
+    //     $formatter = new LineFormatter($format, null, true, true);
+    //     $handler->setFormatter($formatter);
+    //     $logger->pushHandler($handler);
+    //     ErrorHandler::register($logger);
 
-        return $logger;
-    },
+    //     return $logger;
+    // },
     'cache' => function () {
         $redisConf = config()->get('redis');
 
@@ -60,5 +52,7 @@ return [
             'port'   => $redisConf['port'],
         ]);
     },
-    Redis::class     => DI\get('cache'),
+    Redis::class                    => DI\get('cache'),
+    // LoggerInterface::class          => DI\get('logger'),
+    ServerRequestInterface::class   => DI\get('request'),
 ];

@@ -6,6 +6,7 @@ use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased as GroupCountBasedDispatcher;
 use FastRoute\RouteParser\Std;
+use Petronetto\Exceptions\NotFoundHttpException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Router
@@ -17,7 +18,7 @@ class Router
     public function __construct()
     {
         $this->collector = $this->getRouteCollector();
-        $this->initRoutes();
+        $this->registerRoutes();
     }
 
     /**
@@ -47,30 +48,27 @@ class Router
     /**
      * @param  ServerRequestInterface $request
      * @return array
+     * @throws NotFoundHttpException
      */
     public function getRoutes(ServerRequestInterface $request): array
     {
         $dispatcher = $this->getDispatcher();
 
-        // Cleaning extra slashes
-        $path = preg_replace('/\/+/', '/', trim($request->getUri()->getPath(), '/'));
-
         $routes = $dispatcher->dispatch(
             $request->getMethod(),
-            "/{$path}/"
+            $this->normalizePath($request)
         );
 
         if ($routes[0] === Dispatcher::NOT_FOUND) {
-            // TODO: Error Handlers 404
-            die('404');
+            // throw new \Exception("Vamo entender essa porra...");
+            throw new NotFoundHttpException('Route not found');
         }
 
         if ($routes[0] === Dispatcher::METHOD_NOT_ALLOWED) {
-            // TODO: Error Handlers 405
-            die('405');
+            throw new NotFoundHttpException('Route not found');
         }
 
-        // TODO: Check route middleware
+        // Getting middlewares for route
         $middlewares = $this->collector->getRouteMiddlewares($routes[1]);
 
         return [
@@ -80,7 +78,21 @@ class Router
         ];
     }
 
-    public function initRoutes()
+    /**
+     * @param  ServerRequestInterface $request
+     * @return void
+     */
+    public function normalizePath(ServerRequestInterface $request)
+    {
+        $path = preg_replace('/\/+/', '/', trim($request->getUri()->getPath(), '/'));
+
+        return "/{$path}/";
+    }
+
+    /**
+     * Register the routes
+     */
+    public function registerRoutes()
     {
         $this->collector->group('', function ($router) {
             require self::ROUTES_DIR;

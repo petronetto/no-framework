@@ -8,5 +8,4 @@ use Petronetto\ORM\Eloquent;
 
 class Model extends Eloquent
 {
-    //
 }

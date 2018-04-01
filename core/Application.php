@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace Petronetto;
 
-use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
 use Petronetto\Middlewares\ErrorResponseGenerator;
 use Petronetto\Middlewares\NotFoundMiddleware;
+use Petronetto\Middlewares\RouteProcessor;
+use Petronetto\Routing\Router;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
 use Zend\Diactoros\Response;
 use Zend\Stratigility\Middleware\ErrorHandler;
-use Zend\Stratigility\MiddlewarePipe;
-use Petronetto\Routing\Router;
 
+use Zend\Stratigility\MiddlewarePipe;
 use function Zend\Stratigility\middleware;
 
 class Application
@@ -28,12 +24,6 @@ class Application
     /** @var Config */
     private $config;
 
-    /** @var Dispatcher */
-    public $dispatcher;
-
-    /** @var RouteCollector */
-    public $router;
-
     /**
      * Application constructor.
      *
@@ -41,7 +31,6 @@ class Application
      */
     public function __construct()
     {
-        $this->bootErrorHandler();
         $this->config    = Config::getInstance();
         $this->container = $this->getContainer();
         $this->router    = new Router();
@@ -70,7 +59,18 @@ class Application
     {
         $pipeline = new MiddlewarePipe();
 
-        $request = $this->container->get('request');
+        // setup error handling
+        $pipeline->pipe(
+            new ErrorHandler(
+                function (): ResponseInterface {
+                    return $this->container->get('response');
+                },
+                new ErrorResponseGenerator(
+                    // $this->container->get('logger'),
+                    $this->isProd()
+                )
+            )
+        );
 
         // Putting middlewares in pipeline
         $middlewares = $this->config->get('middlewares');
@@ -78,15 +78,7 @@ class Application
             $pipeline->pipe(new $middleware());
         }
 
-        // setup error handling
-        $pipeline->pipe(
-            new ErrorHandler(
-                function (): ResponseInterface {
-                    return $this->container->get('response');
-                },
-                new ErrorResponseGenerator(true)
-            )
-        );
+        $request = $this->container->get('request');
 
         // Getting requested route details
         $routes = $this->router->getRoutes($request);
@@ -97,19 +89,10 @@ class Application
         }
 
         // Processing route
-        $pipeline->pipe(
-            middleware(function (
-                ServerRequestInterface $request,
-                RequestHandlerInterface $handler
-            ) use ($routes) {
-                $routes['params']['request'] = $request;
-                $routes['params']['handler'] = $handler;
+        $pipeline->pipe(new RouteProcessor($this->container, $routes));
 
-                return $this->container->call($routes['handler'], $routes['params']);
-            })
-        );
-
-        // Ok... For now...
+        // Any middleware was found in pipeline
+        // so, an error will be returned
         $pipeline->pipe(new NotFoundMiddleware());
 
         $response = $pipeline->handle($request);
@@ -147,24 +130,5 @@ class Application
     public function isProd(): bool
     {
         return (bool) $this->config->get('application.prod');
-    }
-
-    /**
-     * Error Handlers
-     *
-     * @return void
-     */
-    private function bootErrorHandler(): void
-    {
-        // (new \Whoops\Run())
-        //     ->pushHandler((new \Whoops\Handler\JsonResponseHandler())->addTraceToOutput(true))
-        //     ->pushHandler(new \Whoops\Handler\CallbackHandler(function ($exception) {
-        //         $logger = container()->get(LoggerInterface::class);
-        //         $logger->critical(
-        //             $exception->getMessage(),
-        //             ['exception' => $exception->__toString()]
-        //         );
-        //     }))
-        //     ->register();
     }
 }

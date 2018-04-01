@@ -119,7 +119,7 @@ class RecipeService extends AbstractService
 
         // TODO: Improve it...
         if (!$recipe) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('Recipe not found');
         }
 
         $recipe = (new Fractal())->createData(

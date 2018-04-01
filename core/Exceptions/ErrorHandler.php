@@ -4,8 +4,6 @@ namespace Petronetto\Middlewares;
 
 use Petronetto\Exceptions\NotFoundHttpException;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Throwable;
 use Zend\Diactoros\Response\EmptyResponse;
@@ -13,33 +11,11 @@ use Zend\Diactoros\Response\JsonResponse;
 
 class ErrorResponseGenerator
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var boolean */
-    private $isProd;
-
     /**
-     * @param LoggerInterface $logger
-     * @param boolean $isProd
+     * @param Throwable $e
      */
-    public function __construct($isProd = false)
+    public static function handle(Throwable $e): ResponseInterface
     {
-        // $this->logger = $logger;
-        $this->isProd = $isProd;
-    }
-
-    /**
-     * @param  Throwable              $e
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @return ResponseInterface
-     */
-    public function __invoke(
-        Throwable $e,
-        ServerRequestInterface $request,
-        ResponseInterface $response
-    ): ResponseInterface {
         switch ($e) {
             case $e instanceof NotFoundHttpException:
                 $data = [
@@ -82,7 +58,7 @@ class ErrorResponseGenerator
                 break;
         }
 
-        if (!$this->isProd && $data['code'] != 422) {
+        if (isProd() && $data['code'] != 422) {
             $data['trace'] = $e->getTrace();
         }
 
