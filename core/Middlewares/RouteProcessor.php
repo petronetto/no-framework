@@ -2,6 +2,9 @@
 
 namespace Petronetto\Middlewares;
 
+use FastRoute\Dispatcher;
+use Petronetto\Exceptions\NotAllowedHttpException;
+use Petronetto\Exceptions\NotFoundHttpException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,7 +21,7 @@ class RouteProcessor implements MiddlewareInterface
 
     /**
      * @param ContainerInterface $container
-     * @param array $routes
+     * @param array              $routes
      */
     public function __construct(ContainerInterface $container, array $routes)
     {
@@ -33,8 +36,13 @@ class RouteProcessor implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $routes['params']['request'] = $request;
-        $routes['params']['handler'] = $handler;
+        if ($this->routes['result'] === Dispatcher::NOT_FOUND) {
+            throw new NotFoundHttpException($request);
+        }
+
+        if ($this->routes['result'] === Dispatcher::METHOD_NOT_ALLOWED) {
+            throw new NotAllowedHttpException($request);
+        }
 
         return $this->container->call(
             $this->routes['handler'],

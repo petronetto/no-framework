@@ -18,8 +18,6 @@ class Cors implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $response  = $handler->handle($request);
-
         $headers = Config::get('cors');
 
         if ($request->getMethod() === 'OPTIONS') {
@@ -27,6 +25,8 @@ class Cors implements MiddlewareInterface
                 'method' => 'OPTIONS'
             ], 200, $headers);
         }
+
+        $response  = $handler->handle($request);
 
         foreach ($headers as $key => $value) {
             $response = $response->withHeader($key, $value);

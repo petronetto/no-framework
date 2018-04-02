@@ -12,6 +12,7 @@ use League\Fractal\TransformerAbstract;
  * @SWG\Definition(
  *     definition="RecipeApiResponse",
  *     type="object",
+ *     @SWG\Property(property="id", type="integer", example=10),
  *     @SWG\Property(property="name", type="string", example="Lorem ipsum"),
  *     @SWG\Property(property="description", type="string", example="Lorem ipsum dolar net est"),
  *     @SWG\Property(property="prep_time", type="integer", example=3),

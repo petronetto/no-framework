@@ -163,6 +163,15 @@
                 "produces": [
                     "application/json"
                 ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recipe id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The recieved recipe",
@@ -194,6 +203,13 @@
                     "application/json"
                 ],
                 "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recipe id",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "payload",
                         "in": "body",
@@ -264,6 +280,15 @@
                 "consumes": [
                     "application/json"
                 ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recipe id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "An empty response"
@@ -285,6 +310,13 @@
                     "application/json"
                 ],
                 "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recipe id",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "payload",
                         "in": "body",
@@ -393,6 +425,11 @@
         },
         "Recipe": {
             "properties": {
+                "id": {
+                    "description": "Class Recipe",
+                    "type": "integer",
+                    "example": 10
+                },
                 "name": {
                     "description": "Class Recipe",
                     "type": "string",
@@ -423,7 +460,7 @@
                     "type": "array",
                     "items": {
                         "type": "integer",
-                        "example": 5
+                        "example": "[5,4,5,3]"
                     }
                 }
             },
@@ -431,6 +468,11 @@
         },
         "RecipeApiResponse": {
             "properties": {
+                "id": {
+                    "description": "API Response for Recipes",
+                    "type": "integer",
+                    "example": 10
+                },
                 "name": {
                     "description": "API Response for Recipes",
                     "type": "string",

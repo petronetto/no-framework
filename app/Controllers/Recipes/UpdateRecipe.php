@@ -19,6 +19,13 @@ use Respect\Validation\Validator;
  *     produces={"application/json"},
  *     tags={"recipes"},
  *     @SWG\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="Recipe id",
+ *         required=true,
+ *         type="string"
+ *     ),
+ *     @SWG\Parameter(
  *         name="payload",
  *         in="body",
  *         description="Recipe payload",
@@ -47,6 +54,13 @@ use Respect\Validation\Validator;
  *     consumes={"application/json"},
  *     produces={"application/json"},
  *     tags={"recipes"},
+ *     @SWG\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="Recipe id",
+ *         required=true,
+ *         type="string"
+ *     ),
  *     @SWG\Parameter(
  *         name="payload",
  *         in="body",

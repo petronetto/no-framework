@@ -17,6 +17,7 @@ class ExceptionLogger
     {
         switch ($t) {
             case $t instanceof NotFoundHttpException:
+            case $t instanceof NotAllowedHttpException:
             case $t instanceof NestedValidationException:
             case $t instanceof ValidationException:
                 // Not log this errors
@@ -30,6 +31,7 @@ class ExceptionLogger
                     $request->getHeader('Authorization')[0] ?? 'null'
                 );
                 $logger->error($message);
+
                 break;
             default:
                 $message = sprintf(

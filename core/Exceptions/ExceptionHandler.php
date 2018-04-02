@@ -23,6 +23,14 @@ class ExceptionHandler
                 ];
 
                 break;
+            case $t instanceof NotAllowedHttpException:
+                $data = [
+                    'type'      => get_class($t),
+                    'message'   => $t->getMessage(),
+                    'code'      => 405,
+                ];
+
+                break;
             case $t instanceof ValidationException:
                 $data = [
                     'type'      => get_class($t),

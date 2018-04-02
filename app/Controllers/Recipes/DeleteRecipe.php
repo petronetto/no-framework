@@ -14,6 +14,13 @@ use Zend\Diactoros\Response\EmptyResponse;
  *     path="/recipes/{id}",
  *     consumes={"application/json"},
  *     tags={"recipes"},
+ *     @SWG\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="Recipe id",
+ *         required=true,
+ *         type="string"
+ *     ),
  *     @SWG\Response(
  *         response=204,
  *         description="An empty response",

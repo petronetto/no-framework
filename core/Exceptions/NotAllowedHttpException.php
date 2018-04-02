@@ -2,7 +2,9 @@
 
 namespace Petronetto\Exceptions;
 
-class NotFoundHttpException extends BaseException
+use Psr\Http\Message\ServerRequestInterface;
+
+class NotAllowedHttpException extends BaseException
 {
     /**
      * @param string    $message
@@ -12,8 +14,8 @@ class NotFoundHttpException extends BaseException
     {
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
-        $message = "Method {$method} was not found in path {$path}";
+        $message = "Method {$method} is not allowed in path {$path}";
 
-        parent::__construct($message, 404, $previous);
+        parent::__construct($message, 405, $previous);
     }
 }

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace HelloFresh\Controllers\Recipes;
 
-use Petronetto\Exceptions\NotFoundHttpException;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Get one recipes by id
@@ -16,6 +14,13 @@ use Psr\Http\Message\ServerRequestInterface;
  *     consumes={"application/json"},
  *     produces={"application/json"},
  *     tags={"recipes"},
+ *     @SWG\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="Recipe id",
+ *         required=true,
+ *         type="string"
+ *     ),
  *     @SWG\Response(
  *         response=200,
  *         description="The recieved recipe",
