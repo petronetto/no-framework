@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response\EmptyResponse;
 
 /**
- * Delete one recipes by id
+ * Delete one recipe
  *
  * @SWG\Delete(
  *     path="/recipes/{id}",
@@ -16,7 +16,7 @@ use Zend\Diactoros\Response\EmptyResponse;
  *     tags={"recipes"},
  *     @SWG\Response(
  *         response=204,
- *         description="A empty response",
+ *         description="An empty response",
  *     ),
  *     @SWG\Response(response=404, description="Recipe not found")
  * )
@@ -24,8 +24,6 @@ use Zend\Diactoros\Response\EmptyResponse;
 class DeleteRecipe extends RecipesBaseController
 {
     /**
-     * Get One Recipe by Id
-     *
      * @param  int               $id
      * @return ResponseInterface
      */

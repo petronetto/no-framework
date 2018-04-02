@@ -18,6 +18,25 @@ use Petronetto\Http\AbstractController;
  *         @SWG\Contact(name="Juliano Petronetto", url="http://petronetto.com.br"),
  *     )
  * )
+ *
+ * @SWG\Definition(
+ *     definition="Meta",
+ *     type="object",
+ *     @SWG\Property(
+ *         property="pagination",
+ *         @SWG\Property(property="total", type="integer", example=30),
+ *         @SWG\Property(property="count", type="integer", example=15),
+ *         @SWG\Property(property="per_page", type="integer", example=15),
+ *         @SWG\Property(property="current_page", type="integer", example=2),
+ *         @SWG\Property(property="total_pages", type="integer", example=5),
+ *         @SWG\Property(
+ *             property="links",
+ *             @SWG\Property(property="previous", type="string", example="/api/v1/recipes?page=1"),
+ *             @SWG\Property(property="next", type="string", example="/api/v1/recipes?page=3"),
+ *         ),
+ *     ),
+ * )
+ *
  */
 class Controller extends AbstractController
 {

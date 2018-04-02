@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace HelloFresh\Controllers\Recipes;
 
+use HelloFresh\Models\Recipe;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use HelloFresh\Models\Recipe;
-use Respect\Validation\Validator;
 use Respect\Validation\Exceptions\ValidationException;
+use Respect\Validation\Validator;
 
 /**
- * Get the recipes paginated
+ * Update one recipe
  *
  * @SWG\Put(
- *     path="/recipes",
+ *     path="/recipes/{id}",
  *     consumes={"application/json"},
  *     produces={"application/json"},
  *     tags={"recipes"},
  *     @SWG\Parameter(
  *         name="payload",
  *         in="body",
- *         description="Card payload",
+ *         description="Recipe payload",
  *         required=true,
  *         @SWG\Schema(
  *             @SWG\Property(property="name", type="string", example="Lorem ipsum"),
@@ -32,9 +32,40 @@ use Respect\Validation\Exceptions\ValidationException;
  *         )
  *     ),
  *     @SWG\Response(
- *         response=201,
- *         description="The created recipe",
- *         @SWG\Schema(type="array", @SWG\Items(ref="#/definitions/Recipe")),
+ *         response=200,
+ *         description="The updated recipe",
+ *         @SWG\Property(
+ *             @SWG\Property(property="data", type="object", ref="#/definitions/RecipeApiResponse"),
+ *         ),
+ *         @SWG\Header(header="X-Powered-By", type="string", description=";)"),
+ *         @SWG\Header(header="X-Response-Time", type="string", description="282.263ms"),
+ *     ),
+ * )
+ *
+ * @SWG\Patch(
+ *     path="/recipes/{id}",
+ *     consumes={"application/json"},
+ *     produces={"application/json"},
+ *     tags={"recipes"},
+ *     @SWG\Parameter(
+ *         name="payload",
+ *         in="body",
+ *         description="Recipe payload",
+ *         required=true,
+ *         @SWG\Schema(
+ *             @SWG\Property(property="name", type="string", example="Lorem ipsum"),
+ *             @SWG\Property(property="description", type="string", example="Lorem ipsum dolar net est"),
+ *             @SWG\Property(property="difficulty", type="integer", example=3),
+ *             @SWG\Property(property="prep_time", type="integer", example=60),
+ *             @SWG\Property(property="vegetarian", type="boolean", example=true),
+ *         )
+ *     ),
+ *     @SWG\Response(
+ *         response=200,
+ *         description="The updated recipe",
+ *         @SWG\Property(
+ *             @SWG\Property(property="data", type="object", ref="#/definitions/RecipeApiResponse"),
+ *         ),
  *         @SWG\Header(header="X-Powered-By", type="string", description=";)"),
  *         @SWG\Header(header="X-Response-Time", type="string", description="282.263ms"),
  *     ),
@@ -43,9 +74,8 @@ use Respect\Validation\Exceptions\ValidationException;
 class UpdateRecipe extends RecipesBaseController
 {
     /**
-     * Update a new Recipe
-     *
-     * @param ServerRequestInterface $request
+     * @param  ServerRequestInterface $request
+     * @param  int                    $id
      * @return ResponseInterface
      * @throws ValidationException
      */

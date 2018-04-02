@@ -18,8 +18,10 @@ use Psr\Http\Message\ServerRequestInterface;
  *     tags={"recipes"},
  *     @SWG\Response(
  *         response=200,
- *         description="A paginated array of Recipe",
- *         @SWG\Schema(ref="#/definitions/Recipe")),
+ *         description="The recieved recipe",
+ *         @SWG\Property(
+ *             @SWG\Property(property="data", type="object", ref="#/definitions/RecipeApiResponse"),
+ *         ),
  *     ),
  *     @SWG\Response(response=404, description="Recipe not found")
  * )

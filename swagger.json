@@ -21,7 +21,7 @@
                 "tags": [
                     "recipes"
                 ],
-                "summary": "Get All Articles paginated",
+                "summary": "Get the recipes paginated",
                 "consumes": [
                     "application/json"
                 ],
@@ -32,30 +32,315 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "The result page",
+                        "description": "Page",
                         "required": false,
                         "type": "integer"
                     },
                     {
                         "name": "per_page",
                         "in": "query",
-                        "description": "The page size",
+                        "description": "Page size",
                         "required": false,
                         "type": "integer"
                     }
                 ],
                 "responses": {
                     "206": {
-                        "description": "A paginated array of Articles",
+                        "description": "A paginated array of Recipes",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Recipe"
+                            "properties": {
+                                "data": {
+                                    "description": "Get the recipes paginated",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/RecipeApiResponse"
+                                    }
+                                },
+                                "meta": {
+                                    "description": "Get the recipes paginated",
+                                    "type": "object",
+                                    "$ref": "#/definitions/Meta"
+                                }
                             }
                         },
                         "headers": {
                             "X-Powered-By": {
                                 "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Create a new recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Recipe payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "description": "Create a new recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum"
+                                },
+                                "description": {
+                                    "description": "Create a new recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum dolar net est"
+                                },
+                                "difficulty": {
+                                    "description": "Create a new recipe",
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "prep_time": {
+                                    "description": "Create a new recipe",
+                                    "type": "integer",
+                                    "example": 60
+                                },
+                                "vegetarian": {
+                                    "description": "Create a new recipe",
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "The created recipe",
+                        "schema": {
+                            "description": "Create a new recipe",
+                            "properties": {
+                                "data": {
+                                    "description": "Create a new recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/recipes/{id}": {
+            "get": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Get one recipes by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The recieved recipe",
+                        "schema": {
+                            "description": "Get one recipes by id",
+                            "properties": {
+                                "data": {
+                                    "description": "Get one recipes by id",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Recipe not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Update one recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Recipe payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "description": "Update one recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum"
+                                },
+                                "description": {
+                                    "description": "Update one recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum dolar net est"
+                                },
+                                "difficulty": {
+                                    "description": "Update one recipe",
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "prep_time": {
+                                    "description": "Update one recipe",
+                                    "type": "integer",
+                                    "example": 60
+                                },
+                                "vegetarian": {
+                                    "description": "Update one recipe",
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The updated recipe",
+                        "schema": {
+                            "description": "Update one recipe",
+                            "properties": {
+                                "data": {
+                                    "description": "Update one recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Delete one recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "An empty response"
+                    },
+                    "404": {
+                        "description": "Recipe not found"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Update one recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Recipe payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "description": "Update one recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum"
+                                },
+                                "description": {
+                                    "description": "Update one recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum dolar net est"
+                                },
+                                "difficulty": {
+                                    "description": "Update one recipe",
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "prep_time": {
+                                    "description": "Update one recipe",
+                                    "type": "integer",
+                                    "example": 60
+                                },
+                                "vegetarian": {
+                                    "description": "Update one recipe",
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The updated recipe",
+                        "schema": {
+                            "description": "Update one recipe",
+                            "properties": {
+                                "data": {
+                                    "description": "Update one recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
                                 "type": "string"
                             }
                         }
@@ -65,12 +350,58 @@
         }
     },
     "definitions": {
+        "Meta": {
+            "properties": {
+                "pagination": {
+                    "properties": {
+                        "total": {
+                            "type": "integer",
+                            "example": 30
+                        },
+                        "count": {
+                            "type": "integer",
+                            "example": 15
+                        },
+                        "per_page": {
+                            "type": "integer",
+                            "example": 15
+                        },
+                        "current_page": {
+                            "type": "integer",
+                            "example": 2
+                        },
+                        "total_pages": {
+                            "type": "integer",
+                            "example": 5
+                        },
+                        "links": {
+                            "properties": {
+                                "previous": {
+                                    "type": "string",
+                                    "example": "/api/v1/recipes?page=1"
+                                },
+                                "next": {
+                                    "type": "string",
+                                    "example": "/api/v1/recipes?page=3"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "type": "object"
+        },
         "Recipe": {
             "properties": {
                 "name": {
                     "description": "Class Recipe",
                     "type": "string",
                     "example": "Lorem ipsum"
+                },
+                "description": {
+                    "description": "Class Recipe",
+                    "type": "string",
+                    "example": "Lorem ipsum dolar net est"
                 },
                 "prep_time": {
                     "description": "Class Recipe",
@@ -87,8 +418,46 @@
                     "type": "boolean",
                     "example": true
                 },
-                "rating": {
+                "ratings": {
                     "description": "Class Recipe",
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "example": 5
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "RecipeApiResponse": {
+            "properties": {
+                "name": {
+                    "description": "API Response for Recipes",
+                    "type": "string",
+                    "example": "Lorem ipsum"
+                },
+                "description": {
+                    "description": "API Response for Recipes",
+                    "type": "string",
+                    "example": "Lorem ipsum dolar net est"
+                },
+                "prep_time": {
+                    "description": "API Response for Recipes",
+                    "type": "integer",
+                    "example": 3
+                },
+                "difficulty": {
+                    "description": "API Response for Recipes",
+                    "type": "integer",
+                    "example": 60
+                },
+                "vegetarian": {
+                    "description": "API Response for Recipes",
+                    "type": "boolean",
+                    "example": true
+                },
+                "average_rating": {
+                    "description": "API Response for Recipes",
                     "type": "float",
                     "example": 4.7
                 }

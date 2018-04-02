@@ -10,9 +10,9 @@ use HelloFresh\Models\Recipe;
 use Respect\Validation\Validator as v;
 
 /**
- * Get the recipes paginated
+ * Create a new recipe
  *
- * @SWG\Get(
+ * @SWG\Post(
  *     path="/recipes",
  *     consumes={"application/json"},
  *     produces={"application/json"},
@@ -20,7 +20,7 @@ use Respect\Validation\Validator as v;
  *     @SWG\Parameter(
  *         name="payload",
  *         in="body",
- *         description="Card payload",
+ *         description="Recipe payload",
  *         required=true,
  *         @SWG\Schema(
  *             @SWG\Property(property="name", type="string", example="Lorem ipsum"),
@@ -33,7 +33,9 @@ use Respect\Validation\Validator as v;
  *     @SWG\Response(
  *         response=201,
  *         description="The created recipe",
- *         @SWG\Schema(type="array", @SWG\Items(ref="#/definitions/Recipe")),
+ *         @SWG\Property(
+ *             @SWG\Property(property="data", type="object", ref="#/definitions/RecipeApiResponse"),
+ *         ),
  *         @SWG\Header(header="X-Powered-By", type="string", description=";)"),
  *         @SWG\Header(header="X-Response-Time", type="string", description="282.263ms"),
  *     ),
