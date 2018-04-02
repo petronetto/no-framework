@@ -1,13 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
 return [
     'scheme'   => getenv('REDIS_SCHEME'),
     'host'     => getenv('REDIS_HOST'),
     'port'     => getenv('REDIS_PORT'),
     'user'     => getenv('REDIS_USER'),
     'password' => getenv('REDIS_PASS'),
-    'ttl'      => 0,
-    // 'ttl'      => getenv('REDIS_TTL') ?: (60 * 60 * 24),
+    'ttl'      => getenv('REDIS_TTL') ?: (60 * 60 * 24),
 ];

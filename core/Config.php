@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Petronetto;
 
 use DirectoryIterator;
+use SplFileInfo;
 
 class Config
 {
@@ -13,9 +14,6 @@ class Config
 
     /** @var array */
     private $data = [];
-
-    /** @var Config */
-    protected static $instance = null;
 
     protected function __construct()
     {
@@ -31,7 +29,7 @@ class Config
         }
     }
 
-    private function getPathAndFileName(\SplFileInfo $fileInfo)
+    private function getPathAndFileName(SplFileInfo $fileInfo)
     {
         return [$fileInfo->getPathname(), trim($fileInfo->getFilename(), '.php')];
     }
@@ -43,11 +41,11 @@ class Config
      * @param  mixed $default
      * @return mixed
      */
-    public function get($key, $default = null)
+    public static function get($key, $default = null)
     {
         $parts = explode('.', $key);
 
-        $pointer = $this->data;
+        $pointer = (new self)->getData();
         while ($part = array_shift($parts)) {
             if (!array_key_exists($part, $pointer)) {
                 return $default;
@@ -59,30 +57,11 @@ class Config
         return $pointer;
     }
 
-    public static function getInstance(): Config
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
     /**
-     * Prevent the clone method of this instance.
-     *
-     * @return void
+     * @return array
      */
-    private function __clone()
+    public function getData(): array
     {
-    }
-
-    /**
-     * Prevent method be unserialized.
-     *
-     * @return void
-     */
-    private function __wakeup()
-    {
+        return $this->data;
     }
 }

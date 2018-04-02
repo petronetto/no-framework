@@ -2,21 +2,17 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
 error_reporting(E_ALL);
 
-// header("Access-Control-Allow-Origin: *");
-
-/*
-|--------------------------------------------------------------------------
-| Create the Application
-|--------------------------------------------------------------------------
-|
-| First we need to get an application instance. This creates an instance
-| of the application / container and bootstraps the application so it
-| is ready to receive HTTP requests from the environment.
-|
-*/
-
-$app = require_once __DIR__ . '/../bootstrap/app.php';
+try {
+    $app = new Petronetto\Application();
+} catch (\Throwable $t) {
+    // Catches any error that may occurs
+    // while the application is loading
+    logError($t);
+    bootstrapError($t);
+}
 
 $app->run();

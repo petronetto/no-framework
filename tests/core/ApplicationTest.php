@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 final class ApplicationTest extends TestCase
 {
-    public function testApplicationInstance(): void
+    public function test_application_instance(): void
     {
         $app = new Petronetto\Application(
             (new DI\ContainerBuilder)

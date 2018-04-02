@@ -1,18 +1,15 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+declare(strict_types=1);
 
-/*
-|--------------------------------------------------------------------------
-| Boostrap the Application
-|--------------------------------------------------------------------------
-|
-| First we need to get an application instance. This creates an instance
-| of the application / container and bootstraps the application so it
-| is ready to receive HTTP requests from the environment.
-|
-*/
-
-$app = new Petronetto\Application();
+try {
+    require_once __DIR__ . '/../vendor/autoload.php';
+    $app = new Petronetto\Application();
+} catch (\Throwable $t) {
+    // Catches any error that may occurs
+    // while the application is loading
+    logError($t);
+    bootstrapError($t);
+}
 
 return $app;

@@ -20,7 +20,7 @@ class Cors implements MiddlewareInterface
     {
         $response  = $handler->handle($request);
 
-        $headers = Config::getInstance()->get('cors');
+        $headers = Config::get('cors');
 
         if ($request->getMethod() === 'OPTIONS') {
             return new JsonResponse([

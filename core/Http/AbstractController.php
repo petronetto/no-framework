@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Petronetto\Http;
 
+use Petronetto\Config;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -49,7 +50,7 @@ abstract class AbstractController implements ControllerInterface
 
         return isset($queryParams['per_page'])
             ? (int) $queryParams['per_page']
-            : (int) config()->get('application.pagesize');
+            : (int) Config::get('application.pagesize');
     }
 
     /**

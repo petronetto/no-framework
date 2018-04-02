@@ -2,7 +2,7 @@
 
 namespace Petronetto\Exceptions;
 
-class NotFoundHttpException extends BaseException
+class UnauthorizedException extends BaseException
 {
     /**
      * @param string    $message
@@ -11,9 +11,9 @@ class NotFoundHttpException extends BaseException
     public function __construct(string $message = null, Exception $previous = null)
     {
         if (!$message) {
-            $message = 'Resource not found';
+            $message = 'Unauthorized';
         }
 
-        parent::__construct($message, 404, $previous);
+        parent::__construct($message, 401, $previous);
     }
 }

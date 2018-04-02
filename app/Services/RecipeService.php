@@ -10,8 +10,9 @@ use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item;
 use Petronetto\Exceptions\NotFoundHttpException;
 use Petronetto\Http\Paginator;
+use Petronetto\Exceptions\UnexpectedException;
 
-class RecipeService extends AbstractService
+class RecipeService
 {
     /** @var ORMIterface */
     private $model;
@@ -23,9 +24,8 @@ class RecipeService extends AbstractService
     private $paginator;
 
     /**
-     * Get the model.
-     *
-     * @param Recipe    $model
+     * @param Recipe $model
+     * @param CacheService $cache
      * @param Paginator $paginator
      */
     public function __construct(Recipe $model, CacheService $cache, Paginator $paginator)
@@ -33,6 +33,31 @@ class RecipeService extends AbstractService
         $this->model     = $model;
         $this->cache     = $cache;
         $this->paginator = $paginator;
+    }
+
+    /**
+     * @param  array $data
+     * @return array
+     * @throws UnexpectedException
+     */
+    public function create(array $data): array
+    {
+        $recipe = (new Recipe())->fill($data);
+
+        if ($recipe->save()) {
+            // After save our recipe, we check if
+            // have some cached key, and delete it
+            $this->cache->delKeys('recipes_*');
+
+            $recipe = $recipe->fresh();
+
+            return $this->toResource($recipe->toArray());
+        }
+
+        // If the code reaches this point
+        // it means that something went
+        // wrong, so we throw an exception
+        throw new UnexpectedException();
     }
 
     /**
@@ -69,44 +94,11 @@ class RecipeService extends AbstractService
         return $recipes;
     }
 
-    public function getAll()
-    {
-        return $this->model->all();
-    }
-
     /**
-     * Create a new Recipe
-     *
-     * @param array $data
+     * @param  integer $id
+     * @throws NotFoundHttpException
      * @return array
      */
-    public function create(array $data):array
-    {
-        $recipe = (new Recipe())->fill($data);
-
-        if ($recipe->save()) {
-            // After save our recipe, we check if
-            // have some cached key, and delete it
-            $keys = $this->cache->keys('recipes_*');
-            if ($keys) {
-                $this->cache->del($keys);
-            }
-            return (new Fractal())->createData(
-                new Item(
-                    $recipe->fresh()->toArray(),
-                    new RecipeTransformer()
-                )
-            )->toArray();
-        }
-        // TODO: Improve it...
-        throw new \Exception('Error Processing Request', 500);
-    }
-
-    public function delete($id)
-    {
-        //
-    }
-
     public function getById(int $id): array
     {
         $cacheKey = "recipe_{$id}";
@@ -117,30 +109,78 @@ class RecipeService extends AbstractService
 
         $recipe = $this->model->find($id);
 
-        // TODO: Improve it...
+        // 404 - Not Found
         if (!$recipe) {
             throw new NotFoundHttpException('Recipe not found');
         }
 
-        $recipe = (new Fractal())->createData(
-            new Item(
-                $recipe->toArray(),
-                new RecipeTransformer()
-            )
-        )->toArray();
+        $recipe = $this->toResource($recipe->toArray());
 
         $this->cache->set($cacheKey, $recipe);
 
         return $recipe;
     }
 
-    public function update($id, array $data)
+    /**
+     * @param array $data
+     * @param int $id
+     * @return array
+     * @throws NotFoundHttpException
+     * @throws UnexpectedException
+     */
+    public function update(array $data, int $id): array
     {
-        //
+        $recipe = $this->model->find($id);
+
+        if (!$recipe) {
+            throw new NotFoundHttpException('Recipe not found');
+        }
+
+        $recipe->fill($data);
+
+        if ($recipe->save()) {
+            // Cleaning cache
+            $this->cache->delKeys('recipes_*');
+
+            $recipe = $recipe->fresh();
+
+            return $this->toResource($recipe->toArray());
+        }
+
+        throw new UnexpectedException();
     }
 
-    public function query()
+    /**
+     * @param  integer $id
+     * @return boolean
+     */
+    public function delete(int $id): bool
     {
-        return $this->model->query();
+        $recipe = $this->model->find($id);
+
+        if (!$recipe) {
+            throw new NotFoundHttpException('Recipe not found');
+        }
+
+        if ($recipe->delete()) {
+            $this->cache->delKeys('recipes_*');
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  array $recipe
+     * @return array
+     */
+    private function toResource(array $recipe): array
+    {
+        $item = new Item($recipe, new RecipeTransformer());
+
+        return (new Fractal())
+            ->createData($item)
+            ->toArray();
     }
 }

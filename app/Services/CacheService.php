@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HelloFresh\Services;
 
+use Petronetto\Config;
 use Predis\Client as Redis;
 
 class CacheService
@@ -44,7 +45,7 @@ class CacheService
         $this->client->set($key, serialize($value));
 
         if (!$ttl) {
-            $ttl = (int) config()->get('redis.ttl');
+            $ttl = (int) Config::get('redis.ttl');
         }
         $this->client->expire($key, $ttl);
     }
@@ -69,5 +70,19 @@ class CacheService
     public function del(array ...$keys): void
     {
         $this->client->del(...$keys);
+    }
+
+    /**
+     * Delete all keys that match with pattern
+     *
+     * @param  array $pattern
+     * @return array
+     */
+    public function delKeys(string $pattern): void
+    {
+        $keys = $this->keys($pattern);
+        if ($keys) {
+            $this->del($keys);
+        }
     }
 }

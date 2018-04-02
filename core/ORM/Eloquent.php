@@ -23,7 +23,7 @@ class Eloquent extends Model implements ORMInterface
     public function initialize(): void
     {
         $db      = new Manager();
-        $config  = (Config::getInstance())->get('db');
+        $config  = Config::get('db');
         $db->addConnection([
             'driver'    => $config['driver'],
             'host'      => $config['host'],

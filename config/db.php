@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 return [
     'driver'    => getenv('DB_DRIVER'),
     'host'      => getenv('DB_HOST'),

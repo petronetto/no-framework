@@ -7,12 +7,13 @@ namespace HelloFresh\Controllers\Recipes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use HelloFresh\Models\Recipe;
-use Respect\Validation\Validator as v;
+use Respect\Validation\Validator;
+use Respect\Validation\Exceptions\ValidationException;
 
 /**
  * Get the recipes paginated
  *
- * @SWG\Get(
+ * @SWG\Put(
  *     path="/recipes",
  *     consumes={"application/json"},
  *     produces={"application/json"},
@@ -39,28 +40,33 @@ use Respect\Validation\Validator as v;
  *     ),
  * )
  */
-class CreateRecipe extends RecipesBaseController
+class UpdateRecipe extends RecipesBaseController
 {
     /**
-     * Create a new Recipe
+     * Update a new Recipe
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
+     * @throws ValidationException
      */
-    public function __invoke(ServerRequestInterface $request): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, int $id): ResponseInterface
     {
         $data = $this->parseRequestDataToArray($request);
 
-        $validation = v::key('name', v::alnum()->length(5, 30))
-            ->key('description', v::alnum())
-            ->key('prep_time', v::intVal())
-            ->key('difficulty', v::intVal()->between(1, 3))
-            ->key('vegetarian', v::boolType());
+        $request->getMethod() === 'PATCH'
+            ? $required = false
+            : $required = true;
+
+        $validation = Validator::key('name', Validator::alnum()->length(5, 30), $required)
+            ->key('description', Validator::alnum(), $required)
+            ->key('prep_time', Validator::intVal(), $required)
+            ->key('difficulty', Validator::intVal()->between(1, 3), $required)
+            ->key('vegetarian', Validator::boolType(), $required);
 
         $validation->assert($data);
 
-        $recipe = $this->service->create($data);
+        $recipe = $this->service->update($data, $id);
 
-        return $this->json($recipe, 201);
+        return $this->json($recipe, 200);
     }
 }
