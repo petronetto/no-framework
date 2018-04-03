@@ -197,7 +197,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             }
         },
         "/recipes/{id}": {
@@ -345,7 +350,12 @@
                     "404": {
                         "description": "Recipe not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             },
             "patch": {
                 "tags": [
@@ -426,7 +436,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             }
         },
         "/users": {
@@ -487,7 +502,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -571,7 +591,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             }
         },
         "/users/{id}": {
@@ -579,7 +604,7 @@
                 "tags": [
                     "users"
                 ],
-                "summary": "Get one users by id",
+                "summary": "Get one user by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -599,10 +624,10 @@
                     "200": {
                         "description": "The recieved user",
                         "schema": {
-                            "description": "Get one users by id",
+                            "description": "Get one user by id",
                             "properties": {
                                 "data": {
-                                    "description": "Get one users by id",
+                                    "description": "Get one user by id",
                                     "type": "object",
                                     "$ref": "#/definitions/UserApiResponse"
                                 }
@@ -612,7 +637,12 @@
                     "404": {
                         "description": "User not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -703,7 +733,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -729,7 +764,12 @@
                     "404": {
                         "description": "User not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             },
             "patch": {
                 "tags": [
@@ -825,21 +865,6 @@
         }
     },
     "definitions": {
-        "Error": {
-            "description": "",
-            "properties": {
-                "type": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "integer"
-                },
-                "code": {
-                    "type": "integer"
-                }
-            },
-            "type": "object"
-        },
         "Meta": {
             "properties": {
                 "pagination": {
@@ -877,6 +902,24 @@
                             }
                         }
                     }
+                }
+            },
+            "type": "object"
+        },
+        "Error": {
+            "description": "",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "example": "Exception"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Something went wrong"
+                },
+                "code": {
+                    "type": "string",
+                    "example": 400
                 }
             },
             "type": "object"

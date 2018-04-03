@@ -7,7 +7,7 @@ namespace HelloFresh\Controllers\User;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Get one users by id
+ * Get one user by id
  *
  * @SWG\Get(
  *     path="/users/{id}",

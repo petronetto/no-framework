@@ -24,14 +24,6 @@ use Petronetto\Http\AbstractController;
  *         name="Authorization",
  *         in="header"
  *     ),
- *     @SWG\Definition(
- *         definition="Error",
- *         description="",
- *         type="object",
- *         @SWG\Property(property="type", type="string"),
- *         @SWG\Property(property="message", type="integer"),
- *         @SWG\Property(property="code", type="integer"),
- *     ),
  * ),
  *
  * @SWG\Definition(
@@ -50,8 +42,16 @@ use Petronetto\Http\AbstractController;
  *             @SWG\Property(property="next", type="string", example="/api/v1/recipes?page=3"),
  *         ),
  *     ),
- * )
+ * ),
  *
+ * @SWG\Definition(
+ *     definition="Error",
+ *     description="",
+ *     type="object",
+ *     @SWG\Property(property="type", type="string", example="Exception"),
+ *     @SWG\Property(property="message", type="string", example="Something went wrong"),
+ *     @SWG\Property(property="code", type="string", example=400),
+ * ),
  */
 class Controller extends AbstractController
 {
