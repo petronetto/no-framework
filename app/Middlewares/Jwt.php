@@ -21,6 +21,10 @@ class Jwt implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        if (!$request->getHeader('Authorization')) {
+            throw new UnauthorizedException('Token not present');
+        }
+
         try {
             list($token) = $request->getHeader('Authorization');
 

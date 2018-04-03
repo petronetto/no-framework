@@ -15,7 +15,6 @@ services:
       - ./log/newrelic:/var/log/newrelic
     links:
       - hellofresh.postgres
-      - hellofresh.mongodb
       - hellofresh.redis
     env_file:
       - .env
@@ -57,14 +56,15 @@ services:
 #---------------------------------------------
 # MongoDB Container
 #---------------------------------------------
-  hellofresh.mongodb:
-    container_name: hellofresh.mongodb
-    image: mvertes/alpine-mongo:3.2.3
-    restart: unless-stopped
-    ports:
-      - 27017:27017
-    networks:
-      - hello
+# I love Mongo <3, but I'll don't use it this time, sorry Mongo :/
+  # hellofresh.mongodb:
+  #   container_name: hellofresh.mongodb
+  #   image: mvertes/alpine-mongo:3.2.3
+  #   restart: unless-stopped
+  #   ports:
+  #     - 27017:27017
+  #   networks:
+  #     - hello
 #---------------------------------------------
 # Redis Container
 #---------------------------------------------

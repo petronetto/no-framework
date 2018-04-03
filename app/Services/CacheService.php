@@ -12,6 +12,9 @@ class CacheService
     /** @var Predis\Client  */
     protected $client;
 
+    /**
+     * @param Redis $client
+     */
     public function __construct(Redis $client)
     {
         $this->client = $client;
@@ -84,5 +87,15 @@ class CacheService
         if ($keys) {
             $this->del($keys);
         }
+    }
+
+    /**
+     * Clear all cache
+     *
+     * @return array
+     */
+    public function flushAll(): void
+    {
+        $this->client->flushall();
     }
 }

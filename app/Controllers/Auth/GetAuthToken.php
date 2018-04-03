@@ -32,7 +32,7 @@ use Respect\Validation\Validator as v;
  *         description="JWT Token",
  *         @SWG\Property(property="token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0..."),
  *     ),
- *     @SWG\Response(response=401, description="Invalid credentials")
+ *     @SWG\Response(response=401, ref="#/definitions/Error"),
  * )
  */
 class GetAuthToken extends AuthBaseController

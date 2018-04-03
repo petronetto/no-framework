@@ -28,7 +28,8 @@ use Zend\Diactoros\Response\EmptyResponse;
  *         response=204,
  *         description="An empty response",
  *     ),
- *     @SWG\Response(response=404, description="Recipe not found")
+ *     @SWG\Response(response=401, ref="#/definitions/Error"),
+ *     @SWG\Response(response=404, ref="#/definitions/Error"),
  * )
  */
 class DeleteRecipe extends RecipesBaseController

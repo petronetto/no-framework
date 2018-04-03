@@ -31,7 +31,8 @@ use Psr\Http\Message\ResponseInterface;
  *             @SWG\Property(property="data", type="object", ref="#/definitions/UserApiResponse"),
  *         ),
  *     ),
- *     @SWG\Response(response=404, description="User not found")
+ *     @SWG\Response(response=401, ref="#/definitions/Error"),
+ *     @SWG\Response(response=404, ref="#/definitions/Error"),
  * )
  */
 class GetUser extends UsersBaseController

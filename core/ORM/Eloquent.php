@@ -24,16 +24,7 @@ class Eloquent extends Model implements ORMInterface
     {
         $db      = new Manager();
         $config  = Config::get('db');
-        $db->addConnection([
-            'driver'    => $config['driver'],
-            'host'      => $config['host'],
-            'database'  => $config['database'],
-            'username'  => $config['username'],
-            'password'  => $config['password'],
-            'port'      => $config['port'],
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-        ]);
+        $db->addConnection($config[$config['default']]);
         $db->bootEloquent();
         $db->setAsGlobal();
     }

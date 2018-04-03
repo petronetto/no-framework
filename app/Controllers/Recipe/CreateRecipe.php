@@ -42,6 +42,7 @@ use Respect\Validation\Validator as v;
  *         @SWG\Header(header="X-Powered-By", type="string", description=";)"),
  *         @SWG\Header(header="X-Response-Time", type="string", description="282.263ms"),
  *     ),
+ *     @SWG\Response(response=401, ref="#/definitions/Error"),
  * )
  */
 class CreateRecipe extends RecipesBaseController
@@ -56,8 +57,8 @@ class CreateRecipe extends RecipesBaseController
     {
         $data = $this->parseRequestDataToArray($request);
 
-        $validation = v::key('name', v::alnum()->length(5, 30))
-            ->key('description', v::alnum())
+        $validation = v::key('name', v::stringType()->notEmpty()->length(5, 30))
+            ->key('description', v::stringType()->notEmpty()->length(5, null))
             ->key('prep_time', v::intVal())
             ->key('difficulty', v::intVal()->between(1, 3))
             ->key('vegetarian', v::boolType());

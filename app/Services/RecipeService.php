@@ -61,13 +61,11 @@ class RecipeService
     }
 
     /**
-     * Paginate result.
-     *
      * @param  int   $currentPage
      * @param  int   $perPage
      * @return array
      */
-    public function paginate(int $currentPage, int $perPage): array
+    public function get(int $currentPage, int $perPage): array
     {
         $cacheKey = "recipes_page_{$currentPage}_per_page_{$perPage}";
 
@@ -81,6 +79,60 @@ class RecipeService
         $query->take($perPage);
         $data = $query->orderBy('id', 'DESC')->get()->toArray();
 
+        $recipes = $this->paginate(
+            $data,
+            $total,
+            $perPage,
+            $currentPage
+        );
+
+        $this->cache->set($cacheKey, $recipes);
+
+        return $recipes;
+    }
+
+    /**
+     * @param string $search
+     * @param integer $currentPage
+     * @param integer $perPage
+     * @return array
+     */
+    public function search(string $search, int $currentPage, int $perPage): array
+    {
+        $cacheKey = "recipes_search_{$search}_page_{$currentPage}_per_page_{$perPage}";
+
+        if ($cached = $this->cache->get($cacheKey)) {
+            return $cached;
+        }
+
+        $result = $this->model->search($search);
+        $total = $result->count();
+
+        $result->skip(($currentPage - 1) * $perPage);
+        $result->take($perPage);
+        $data = $result->get()->toArray();
+
+        $recipes = $this->paginate(
+            $data,
+            $total,
+            $perPage,
+            $currentPage
+        );
+
+        $this->cache->set($cacheKey, $recipes);
+
+        return $recipes;
+    }
+
+    /**
+     * @param array $data
+     * @param integer $total
+     * @param integer $perPage
+     * @param integer $currentPage
+     * @return array
+     */
+    public function paginate(array $data, int $total, int $perPage, int $currentPage): array
+    {
         $recipes = $this->paginator->paginate(
             $data,
             $total,
@@ -88,8 +140,6 @@ class RecipeService
             $currentPage,
             new RecipeTransformer()
         );
-
-        $this->cache->set($cacheKey, $recipes);
 
         return $recipes;
     }

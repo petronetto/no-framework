@@ -3,6 +3,7 @@
 namespace Petronetto\Exceptions;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Exceptions\ValidationException;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
@@ -12,8 +13,11 @@ class ExceptionHandler
     /**
      * @param Throwable $t
      */
-    public static function handle(Throwable $t, bool $isProd): ResponseInterface
-    {
+    public static function handle(
+        Throwable $t,
+        ServerRequestInterface $request,
+        bool $isProd
+    ): ResponseInterface {
         switch ($t) {
             case $t instanceof NotFoundHttpException:
                 $data = [
@@ -29,6 +33,8 @@ class ExceptionHandler
                     'message'   => $t->getMessage(),
                     'code'      => 405,
                 ];
+
+                break;
             case $t instanceof UnauthorizedException:
                 $data = [
                     'type'      => get_class($t),

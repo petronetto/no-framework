@@ -42,6 +42,7 @@ use Psr\Http\Message\ServerRequestInterface;
  *         @SWG\Header(header="X-Powered-By", type="string", description=";)"),
  *         @SWG\Header(header="X-Response-Time", type="string", description="282.263ms"),
  *     ),
+ *     @SWG\Response(response=401, ref="#/definitions/Error"),
  * )
  */
 class GetUsers extends UsersBaseController

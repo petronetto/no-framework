@@ -28,7 +28,7 @@ use Psr\Http\Message\ResponseInterface;
  *             @SWG\Property(property="data", type="object", ref="#/definitions/RecipeApiResponse"),
  *         ),
  *     ),
- *     @SWG\Response(response=404, description="Recipe not found")
+ *     @SWG\Response(response=404, ref="#/definitions/Error"),
  * )
  */
 class GetRecipe extends RecipesBaseController

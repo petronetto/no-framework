@@ -7,6 +7,11 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 RESET=`tput sgr0`
 
+function print_logo {
+    logo=`cat logo.txt`
+    echo "${GREEN}$logo"
+}
+
 function print_header {
     echo "==================================================="
     echo "|${GREEN}     _____     _ _     _____             _       ${RESET}|"
@@ -23,12 +28,14 @@ function help() {
     echo "==================================================="
     echo "|   Available options                             |"
     echo "==================================================="
+    echo "|${GREEN}  * fresh                                        ${RESET}|"
+    echo "|${RESET}  Bootstraps the dev environment                 ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
     echo "|${GREEN}  * app [params]                                 ${RESET}|"
     echo "|${RESET}  Run a command inside docker container          ${RESET}|"
     echo "|${GREEN}                                                 ${RESET}|"
-    echo "|${GREEN}  * up  [--migrate --seed]                       ${RESET}|"
-    echo "|${RESET}  Build containers. Additionally you can run     ${RESET}|"
-    echo "|${RESET}  the migrations and seeders                     ${RESET}|"
+    echo "|${GREEN}  * up                                           ${RESET}|"
+    echo "|${RESET}  Build or up the containers.                    ${RESET}|"
     echo "|${GREEN}                                                 ${RESET}|"
     echo "|${GREEN}  * migrate                                      ${RESET}|"
     echo "|${RESET}  Run the database migrations                    ${RESET}|"
@@ -107,35 +114,42 @@ function create_docker_network {
 function up {
     shift
     create_docker_network
-    if [ ! -d vendor ];
-    then
-        print_info "Installing project dependencies"
-        composer install -o --ignore-platform-reqs
-    fi
-
-    print_info "Running containers"
     docker-compose -f docker-compose.yml up -d
+}
 
-    if [ $# -eq 0 ]
-    then
-        exit 0
-    fi
+function fresh {
+    print_logo
+    {
+        print_info "Building containers."
+        up
+    } || {
+        print_error "Something went wrong while building the conainer. \
+        Please check if docker is installed and you internet connection."
+    }
 
-    if [ $1 == "--migrate" ] || [ $2 == '--migrate' ]
-    then
-        sleep 5 # Giving some time to Postgres container be ready
-        print_info "Migrating database"
-        migrate
-    fi
+    sleep 7 # Giving some time to containers be ready
+    {
+        if [ ! -d vendor ];
+        then
+            print_info "Installing project dependencies"
+            run_inside_docker composer install -o
+        fi
+    } || {
+        print_error "Something went wrong while installing project dependencies. \
+        Please check if docker was builded correctly and you internet connection."
+    }
+    print_info "Migrating the database"
+    migrate
 
-    if [ $1 == "--seed" ] || [ $2 == '--seed' ]
-    then
-        print_info "Seeding database"
-        seed
-    fi
+    print_info "Seeding the database"
+    seed
 }
 
 case $1 in
+"fresh")
+    fresh
+    exit 0
+    ;;
 "app")
     shift
     run_inside_docker $@
@@ -147,18 +161,22 @@ case $1 in
     exit 0
     ;;
 "migrate")
+    print_info "Migrating the database"
     migrate
     exit 0
     ;;
 "seed")
+    print_info "Seeding the database"
     seed
     exit 0
     ;;
 "rollback")
+    print_info "Rollbacking the database"
     rollback
     exit 0
     ;;
 "docs")
+    print_info "Generating API Docs"
     run_inside_docker \
         ./vendor/bin/swagger ./app \
         --output ./;
@@ -188,6 +206,10 @@ case $1 in
     ;;
 "text")
     pretty_print $@
+    exit 0
+    ;;
+"hellofresh")
+    print_logo
     exit 0
     ;;
 *)

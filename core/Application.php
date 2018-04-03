@@ -78,7 +78,7 @@ class Application
         } catch (\Throwable $t) {
             $logger   = $this->container->get('logger');
             $request  = $this->container->get('request');
-            $response = ExceptionHandler::handle($t, $this->isProd());
+            $response = ExceptionHandler::handle($t, $request, $this->isProd());
             ExceptionLogger::handle($t, $logger, $request);
         }
 

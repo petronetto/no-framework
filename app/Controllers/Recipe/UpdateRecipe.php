@@ -86,6 +86,8 @@ use Respect\Validation\Validator as v;
  *         @SWG\Header(header="X-Powered-By", type="string", description=";)"),
  *         @SWG\Header(header="X-Response-Time", type="string", description="282.263ms"),
  *     ),
+ *     @SWG\Response(response=401, ref="#/definitions/Error"),
+ *     @SWG\Response(response=404, ref="#/definitions/Error"),
  * )
  */
 class UpdateRecipe extends RecipesBaseController
@@ -104,8 +106,8 @@ class UpdateRecipe extends RecipesBaseController
             ? $required = false
             : $required = true;
 
-        $validation = v::key('name', v::alnum()->length(5, 30), $required)
-            ->key('description', v::alnum(), $required)
+        $validation = v::key('name', v::stringType()->notEmpty()->length(5, 30), $required)
+            ->key('description', v::stringType()->notEmpty()->length(5, null), $required)
             ->key('prep_time', v::intVal(), $required)
             ->key('difficulty', v::intVal()->between(1, 3), $required)
             ->key('vegetarian', v::boolType(), $required);

@@ -22,4 +22,7 @@ $router->group('/api/v1/', function ($router) {
     $router->put('users/{id}', HelloFresh\Controllers\User\UpdateUser::class, [$auth]);
     $router->patch('users/{id}', HelloFresh\Controllers\User\UpdateUser::class, [$auth]);
     $router->delete('users/{id}', HelloFresh\Controllers\User\DeleteUser::class, [$auth]);
+
+    //----------     Delete cache     ----------//
+    $router->delete('cache', HelloFresh\Controllers\Cache\DeleteCache::class, [$auth]);
 });

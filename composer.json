@@ -44,11 +44,15 @@
         "zircote/swagger-php": "^2.0"
     },
     "scripts": {
+        "post-root-package-install": [
+            "php -r \"copy('.env.example', '.env');\""
+        ],
         "cs-check": "phpcs",
         "cs-fix": "php-cs-fixer fix --config=.php_cs -v --dry-run --stop-on-violation --using-cache=no",
         "test": "phpunit  --coverage-text --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     },
+
     "config": {
         "optimize-autoloader": true
     }

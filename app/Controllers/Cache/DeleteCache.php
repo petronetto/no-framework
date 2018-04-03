@@ -2,45 +2,37 @@
 
 declare(strict_types=1);
 
-namespace HelloFresh\Controllers\User;
+namespace HelloFresh\Controllers\Cache;
 
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response\EmptyResponse;
 
 /**
- * Delete one user
+ * Delete the application cache
  *
  * @SWG\Delete(
- *     path="/users/{id}",
+ *     path="/cache",
  *     consumes={"application/json"},
- *     tags={"users"},
+ *     produces={"application/json"},
+ *     tags={"cache"},
  *     security={
  *         {"Authorization": {}}
  *     },
- *     @SWG\Parameter(
- *         name="id",
- *         in="path",
- *         description="User id",
- *         required=true,
- *         type="string"
- *     ),
  *     @SWG\Response(
  *         response=204,
  *         description="An empty response",
  *     ),
  *     @SWG\Response(response=401, ref="#/definitions/Error"),
- *     @SWG\Response(response=404, ref="#/definitions/Error"),
  * )
  */
-class DeleteUser extends UsersBaseController
+class DeleteCache extends CacheBaseController
 {
     /**
-     * @param  int               $id
      * @return ResponseInterface
      */
-    public function __invoke(int $id): ResponseInterface
+    public function __invoke(): ResponseInterface
     {
-        $this->service->delete($id);
+        $this->cache->flushAll();
 
         return new EmptyResponse();
     }

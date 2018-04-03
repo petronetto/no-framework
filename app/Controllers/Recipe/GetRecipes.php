@@ -16,6 +16,13 @@ use Psr\Http\Message\ServerRequestInterface;
  *     produces={"application/json"},
  *     tags={"recipes"},
  *     @SWG\Parameter(
+ *         name="q",
+ *         in="query",
+ *         description="A term for a full text search",
+ *         required=false,
+ *         type="string"
+ *     ),
+ *     @SWG\Parameter(
  *         name="page",
  *         in="query",
  *         description="Page",
@@ -50,7 +57,18 @@ class GetRecipes extends RecipesBaseController
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $recipes = $this->service->paginate(
+        $queryParams = $request->getQueryParams();
+        if (array_key_exists('q', $queryParams)) {
+            $recipes = $this->service->search(
+                $queryParams['q'],
+                $this->getCurrentPage($request),
+                $this->getPageSize($request)
+            );
+
+            return $this->json($recipes, 206);
+        }
+
+        $recipes = $this->service->get(
             $this->getCurrentPage($request),
             $this->getPageSize($request)
         );

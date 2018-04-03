@@ -60,9 +60,36 @@
                         }
                     },
                     "401": {
-                        "description": "Invalid credentials"
+                        "$ref": "#/definitions/Error"
                     }
                 }
+            }
+        },
+        "/cache": {
+            "delete": {
+                "tags": [
+                    "cache"
+                ],
+                "summary": "Delete the application cache",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "An empty response"
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             }
         },
         "/recipes": {
@@ -78,6 +105,13 @@
                     "application/json"
                 ],
                 "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "A term for a full text search",
+                        "required": false,
+                        "type": "string"
+                    },
                     {
                         "name": "page",
                         "in": "query",
@@ -196,6 +230,9 @@
                                 "type": "string"
                             }
                         }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
                     }
                 },
                 "security": [
@@ -241,7 +278,7 @@
                         }
                     },
                     "404": {
-                        "description": "Recipe not found"
+                        "$ref": "#/definitions/Error"
                     }
                 }
             },
@@ -347,8 +384,11 @@
                     "204": {
                         "description": "An empty response"
                     },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
                     "404": {
-                        "description": "Recipe not found"
+                        "$ref": "#/definitions/Error"
                     }
                 },
                 "security": [
@@ -435,6 +475,12 @@
                                 "type": "string"
                             }
                         }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
                     }
                 },
                 "security": [
@@ -501,6 +547,9 @@
                                 "type": "string"
                             }
                         }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
                     }
                 },
                 "security": [
@@ -590,6 +639,9 @@
                                 "type": "string"
                             }
                         }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
                     }
                 },
                 "security": [
@@ -634,8 +686,11 @@
                             }
                         }
                     },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
                     "404": {
-                        "description": "User not found"
+                        "$ref": "#/definitions/Error"
                     }
                 },
                 "security": [
@@ -761,8 +816,11 @@
                     "204": {
                         "description": "An empty response"
                     },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
                     "404": {
-                        "description": "User not found"
+                        "$ref": "#/definitions/Error"
                     }
                 },
                 "security": [
@@ -859,6 +917,12 @@
                                 "type": "string"
                             }
                         }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
                     }
                 }
             }
