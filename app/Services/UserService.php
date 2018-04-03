@@ -4,31 +4,25 @@ declare(strict_types=1);
 
 namespace HelloFresh\Services;
 
-use HelloFresh\Models\Recipe;
-use HelloFresh\Transformers\RecipeTransformer;
+use HelloFresh\Models\User;
+use HelloFresh\Transformers\UserTransformer;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item;
 use Petronetto\Exceptions\NotFoundHttpException;
 use Petronetto\Http\Paginator;
 use Petronetto\Exceptions\UnexpectedException;
 
-class RecipeService
+class UserService
 {
     /** @var ORMIterface */
     private $model;
 
-    /** @var CacheService */
-    private $cache;
-
-    /** @var Paginator */
-    private $paginator;
-
     /**
-     * @param Recipe $model
+     * @param User $model
      * @param CacheService $cache
      * @param Paginator $paginator
      */
-    public function __construct(Recipe $model, CacheService $cache, Paginator $paginator)
+    public function __construct(User $model, CacheService $cache, Paginator $paginator)
     {
         $this->model     = $model;
         $this->cache     = $cache;
@@ -42,16 +36,16 @@ class RecipeService
      */
     public function create(array $data): array
     {
-        $recipe = (new Recipe())->fill($data);
+        $user = (new User())->fill($data);
 
-        if ($recipe->save()) {
-            // After save our recipe, we check if
+        if ($user->save()) {
+            // After save our user, we check if
             // have some cached key, and delete it
-            $this->cache->delKeys('recipes_*');
+            $this->cache->delKeys('users_*');
 
-            $recipe = $recipe->fresh();
+            $user = $user->fresh();
 
-            return $this->toResource($recipe->toArray());
+            return $this->toResource($user->toArray());
         }
 
         // If the code reaches this point
@@ -69,7 +63,7 @@ class RecipeService
      */
     public function paginate(int $currentPage, int $perPage): array
     {
-        $cacheKey = "recipes_page_{$currentPage}_per_page_{$perPage}";
+        $cacheKey = "users_page_{$currentPage}_per_page_{$perPage}";
 
         if ($cached = $this->cache->get($cacheKey)) {
             return $cached;
@@ -81,17 +75,17 @@ class RecipeService
         $query->take($perPage);
         $data = $query->orderBy('id', 'DESC')->get()->toArray();
 
-        $recipes = $this->paginator->paginate(
+        $users = $this->paginator->paginate(
             $data,
             $total,
             $perPage,
             $currentPage,
-            new RecipeTransformer()
+            new UserTransformer()
         );
 
-        $this->cache->set($cacheKey, $recipes);
+        $this->cache->set($cacheKey, $users);
 
-        return $recipes;
+        return $users;
     }
 
     /**
@@ -101,24 +95,24 @@ class RecipeService
      */
     public function getById(int $id): array
     {
-        $cacheKey = "recipe_{$id}";
+        $cacheKey = "user_{$id}";
 
         if ($cached = $this->cache->get($cacheKey)) {
             return $cached;
         }
 
-        $recipe = $this->model->find($id);
+        $user = $this->model->find($id);
 
         // 404 - Not Found
-        if (!$recipe) {
-            throw new NotFoundHttpException('Recipe not found');
+        if (!$user) {
+            throw new NotFoundHttpException('User not found');
         }
 
-        $recipe = $this->toResource($recipe->toArray());
+        $user = $this->toResource($user->toArray());
 
-        $this->cache->set($cacheKey, $recipe);
+        $this->cache->set($cacheKey, $user);
 
-        return $recipe;
+        return $user;
     }
 
     /**
@@ -130,21 +124,21 @@ class RecipeService
      */
     public function update(array $data, int $id): array
     {
-        $recipe = $this->model->find($id);
+        $user = $this->model->find($id);
 
-        if (!$recipe) {
-            throw new NotFoundHttpException('Recipe not found');
+        if (!$user) {
+            throw new NotFoundHttpException('User not found');
         }
 
-        $recipe->fill($data);
+        $user->fill($data);
 
-        if ($recipe->save()) {
+        if ($user->save()) {
             // Cleaning cache
-            $this->cache->delKeys('recipes_*');
+            $this->cache->delKeys('users_*');
 
-            $recipe = $recipe->fresh();
+            $user = $user->fresh();
 
-            return $this->toResource($recipe->toArray());
+            return $this->toResource($user->toArray());
         }
 
         throw new UnexpectedException();
@@ -156,14 +150,14 @@ class RecipeService
      */
     public function delete(int $id): bool
     {
-        $recipe = $this->model->find($id);
+        $user = $this->model->find($id);
 
-        if (!$recipe) {
-            throw new NotFoundHttpException('Recipe not found');
+        if (!$user) {
+            throw new NotFoundHttpException('User not found');
         }
 
-        if ($recipe->delete()) {
-            $this->cache->delKeys('recipes_*');
+        if ($user->delete()) {
+            $this->cache->delKeys('users_*');
 
             return true;
         }
@@ -172,12 +166,12 @@ class RecipeService
     }
 
     /**
-     * @param  array $recipe
+     * @param  array $user
      * @return array
      */
-    private function toResource(array $recipe): array
+    private function toResource(array $user): array
     {
-        $item = new Item($recipe, new RecipeTransformer());
+        $item = new Item($user, new UserTransformer());
 
         return (new Fractal())
             ->createData($item)

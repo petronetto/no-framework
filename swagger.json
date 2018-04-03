@@ -12,10 +12,59 @@
     "host": "localhost:8080",
     "basePath": "/api/v1",
     "schemes": [
-        "http",
-        "https"
+        "http"
     ],
     "paths": {
+        "/auth": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get a JWT Token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Auth payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "username": {
+                                    "description": "Get a JWT Token",
+                                    "type": "string",
+                                    "example": "johndoe"
+                                },
+                                "password": {
+                                    "description": "Get a JWT Token",
+                                    "type": "string",
+                                    "example": "secret"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JWT Token",
+                        "schema": {
+                            "property": "token",
+                            "description": "Get a JWT Token",
+                            "type": "string",
+                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0..."
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
         "/recipes": {
             "get": {
                 "tags": [
@@ -379,9 +428,418 @@
                     }
                 }
             }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get the users paginated",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Page size",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "206": {
+                        "description": "A paginated array of Users",
+                        "schema": {
+                            "properties": {
+                                "data": {
+                                    "description": "Get the users paginated",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/UserApiResponse"
+                                    }
+                                },
+                                "meta": {
+                                    "description": "Get the users paginated",
+                                    "type": "object",
+                                    "$ref": "#/definitions/Meta"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "User payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "id": {
+                                    "description": "Create a new user",
+                                    "type": "integer",
+                                    "example": 10
+                                },
+                                "username": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "jhondoe"
+                                },
+                                "email": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "john@doe.com"
+                                },
+                                "first_name": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "Jhon"
+                                },
+                                "last_name": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "Doe"
+                                },
+                                "password": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "secret"
+                                },
+                                "password_confirmation": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "secret"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "The created user",
+                        "schema": {
+                            "description": "Create a new user",
+                            "properties": {
+                                "data": {
+                                    "description": "Create a new user",
+                                    "type": "object",
+                                    "$ref": "#/definitions/UserApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get one users by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The recieved user",
+                        "schema": {
+                            "description": "Get one users by id",
+                            "properties": {
+                                "data": {
+                                    "description": "Get one users by id",
+                                    "type": "object",
+                                    "$ref": "#/definitions/UserApiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update one user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "User payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "id": {
+                                    "description": "Update one user",
+                                    "type": "integer",
+                                    "example": 10
+                                },
+                                "username": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "jhondoe"
+                                },
+                                "email": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "john@doe.com"
+                                },
+                                "first_name": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "Jhon"
+                                },
+                                "last_name": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "Doe"
+                                },
+                                "password": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "secret"
+                                },
+                                "password_confirmation": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "secret"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The updated user",
+                        "schema": {
+                            "description": "Update one user",
+                            "properties": {
+                                "data": {
+                                    "description": "Update one user",
+                                    "type": "object",
+                                    "$ref": "#/definitions/UserApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete one user",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "An empty response"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update one user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "User payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "id": {
+                                    "description": "Update one user",
+                                    "type": "integer",
+                                    "example": 10
+                                },
+                                "username": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "jhondoe"
+                                },
+                                "email": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "john@doe.com"
+                                },
+                                "first_name": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "Jhon"
+                                },
+                                "last_name": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "Doe"
+                                },
+                                "password": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "secret"
+                                },
+                                "password_confirmation": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "secret"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The updated user",
+                        "schema": {
+                            "description": "Update one user",
+                            "properties": {
+                                "data": {
+                                    "description": "Update one user",
+                                    "type": "object",
+                                    "$ref": "#/definitions/UserApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "Error": {
+            "description": "",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
         "Meta": {
             "properties": {
                 "pagination": {
@@ -466,6 +924,41 @@
             },
             "type": "object"
         },
+        "User": {
+            "properties": {
+                "id": {
+                    "description": "Class User",
+                    "type": "integer",
+                    "example": 10
+                },
+                "username": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "jhondoe"
+                },
+                "email": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "john@doe.com"
+                },
+                "first_name": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "Jhon"
+                },
+                "last_name": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "Doe"
+                },
+                "password": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "secret"
+                }
+            },
+            "type": "object"
+        },
         "RecipeApiResponse": {
             "properties": {
                 "id": {
@@ -505,6 +998,44 @@
                 }
             },
             "type": "object"
+        },
+        "UserApiResponse": {
+            "properties": {
+                "id": {
+                    "description": "API Response for Users",
+                    "type": "integer",
+                    "example": 10
+                },
+                "username": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "jhondoe"
+                },
+                "email": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "john@doe.com"
+                },
+                "first_name": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "Jhon"
+                },
+                "last_name": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "Doe"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "securityDefinitions": {
+        "Authorization": {
+            "type": "apiKey",
+            "description": "The JWT token. Get in /api/v1/auth",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

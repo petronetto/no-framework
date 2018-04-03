@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace HelloFresh\Controllers\Recipes;
+namespace HelloFresh\Controllers\Recipe;
 
 use HelloFresh\Models\Recipe;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Exceptions\ValidationException;
-use Respect\Validation\Validator;
+use Respect\Validation\Validator as v;
 
 /**
  * Update one recipe
@@ -54,6 +54,9 @@ use Respect\Validation\Validator;
  *     consumes={"application/json"},
  *     produces={"application/json"},
  *     tags={"recipes"},
+ *     security={
+ *         {"Authorization": {}}
+ *     },
  *     @SWG\Parameter(
  *         name="id",
  *         in="path",
@@ -101,11 +104,11 @@ class UpdateRecipe extends RecipesBaseController
             ? $required = false
             : $required = true;
 
-        $validation = Validator::key('name', Validator::alnum()->length(5, 30), $required)
-            ->key('description', Validator::alnum(), $required)
-            ->key('prep_time', Validator::intVal(), $required)
-            ->key('difficulty', Validator::intVal()->between(1, 3), $required)
-            ->key('vegetarian', Validator::boolType(), $required);
+        $validation = v::key('name', v::alnum()->length(5, 30), $required)
+            ->key('description', v::alnum(), $required)
+            ->key('prep_time', v::intVal(), $required)
+            ->key('difficulty', v::intVal()->between(1, 3), $required)
+            ->key('vegetarian', v::boolType(), $required);
 
         $validation->assert($data);
 

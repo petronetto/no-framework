@@ -10,14 +10,29 @@ use Petronetto\Http\AbstractController;
  * @SWG\Swagger(
  *     basePath="/api/v1",
  *     host="localhost:8080",
- *     schemes={"http", "https"},
+ *     schemes={"http"},
  *     @SWG\Info(
  *         version="1.0",
  *         title="HelloFresh Recipes API",
  *         description="HelloFresh Recipes API - By Juliano Petronetto",
  *         @SWG\Contact(name="Juliano Petronetto", url="http://petronetto.com.br"),
- *     )
- * )
+ *     ),
+ *     @SWG\SecurityScheme(
+ *         description="The JWT token. Get in /api/v1/auth",
+ *         securityDefinition="Authorization",
+ *         type="apiKey",
+ *         name="Authorization",
+ *         in="header"
+ *     ),
+ *     @SWG\Definition(
+ *         definition="Error",
+ *         description="",
+ *         type="object",
+ *         @SWG\Property(property="type", type="string"),
+ *         @SWG\Property(property="message", type="integer"),
+ *         @SWG\Property(property="code", type="integer"),
+ *     ),
+ * ),
  *
  * @SWG\Definition(
  *     definition="Meta",

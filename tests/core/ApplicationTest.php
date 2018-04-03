@@ -6,12 +6,7 @@ final class ApplicationTest extends TestCase
 {
     public function test_application_instance(): void
     {
-        $app = new Petronetto\Application(
-            (new DI\ContainerBuilder)
-                ->useAnnotations(false)
-                ->addDefinitions(config()->get('di'))
-                ->build()
-        );
+        $app = new Petronetto\Application();
         $this->assertInstanceOf(
             \Petronetto\Application::class,
             $app
@@ -19,7 +14,7 @@ final class ApplicationTest extends TestCase
 
         $this->assertInstanceOf(
             \DI\Container::class,
-            $app->container
+            $app->getContainer()
         );
     }
 }

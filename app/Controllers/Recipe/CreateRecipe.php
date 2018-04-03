@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace HelloFresh\Controllers\Recipes;
+namespace HelloFresh\Controllers\Recipe;
 
+use HelloFresh\Models\Recipe;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use HelloFresh\Models\Recipe;
 use Respect\Validation\Validator as v;
 
 /**
@@ -17,6 +17,9 @@ use Respect\Validation\Validator as v;
  *     consumes={"application/json"},
  *     produces={"application/json"},
  *     tags={"recipes"},
+ *     security={
+ *         {"Authorization": {}}
+ *     },
  *     @SWG\Parameter(
  *         name="payload",
  *         in="body",
@@ -46,7 +49,7 @@ class CreateRecipe extends RecipesBaseController
     /**
      * Create a new Recipe
      *
-     * @param ServerRequestInterface $request
+     * @param  ServerRequestInterface $request
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface

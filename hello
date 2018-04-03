@@ -46,7 +46,7 @@ function help() {
     echo "|   Available endpoints                           |"
     echo "==================================================="
     echo "|${GREEN}    API            -> http://localhost:8080      ${RESET}|"
-    echo "|${GREEN}    API Docs       -> http://localhost:3000      ${RESET}|"
+    echo "|${GREEN}    API Docs       -> http://localhost:4000      ${RESET}|"
     echo "|${GREEN}    Sonar Qube     -> http://localhost:9000      ${RESET}|"
     echo "==================================================="
     printf "\n\n\n"
@@ -163,6 +163,7 @@ case $1 in
         ./vendor/bin/swagger ./app \
         --output ./;
         docker restart $SWAGGER_CONTAINER_NAME;
+    print_info "See the API docs in http://localhost:4000"
     exit 0
     ;;
 "sonar-runner")

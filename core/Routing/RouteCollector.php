@@ -40,7 +40,6 @@ class RouteCollector
      */
     public function getRouteMiddlewares($handler): array
     {
-        //
         if (array_key_exists($handler, $this->middlewares)) {
             return $this->middlewares[$handler];
         }
@@ -156,12 +155,9 @@ class RouteCollector
 
         // Puting route middlewares in a key value array
         if ($middlewares) {
-            $routeMiddlewares = [];
             foreach ($middlewares as $m) {
-                $routeMiddlewares[$handler][] = $m;
+                $this->middlewares[$handler][] = $m;
             }
-
-            $this->middlewares = $routeMiddlewares;
         }
 
         $routeDatas = $this->routeParser->parse($route);

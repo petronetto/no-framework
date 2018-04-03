@@ -29,6 +29,12 @@ class ExceptionHandler
                     'message'   => $t->getMessage(),
                     'code'      => 405,
                 ];
+            case $t instanceof UnauthorizedException:
+                $data = [
+                    'type'      => get_class($t),
+                    'message'   => $t->getMessage(),
+                    'code'      => 401,
+                ];
 
                 break;
             case $t instanceof ValidationException:
@@ -36,7 +42,7 @@ class ExceptionHandler
                     'type'      => get_class($t),
                     'message'   => (function ($t) {
                         $msgs = explode('- ', $t->getFullMessage());
-                        $msgs = array_filter($msgs);
+                        $msgs = array_unique(array_filter($msgs));
                         $msgs = array_values(array_map('trim', $msgs));
 
                         return $msgs;

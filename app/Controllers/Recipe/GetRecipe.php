@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HelloFresh\Controllers\Recipes;
+namespace HelloFresh\Controllers\Recipe;
 
 use Psr\Http\Message\ResponseInterface;
 

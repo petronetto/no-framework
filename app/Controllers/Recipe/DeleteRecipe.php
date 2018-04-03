@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HelloFresh\Controllers\Recipes;
+namespace HelloFresh\Controllers\Recipe;
 
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response\EmptyResponse;
@@ -14,6 +14,9 @@ use Zend\Diactoros\Response\EmptyResponse;
  *     path="/recipes/{id}",
  *     consumes={"application/json"},
  *     tags={"recipes"},
+ *     security={
+ *         {"Authorization": {}}
+ *     },
  *     @SWG\Parameter(
  *         name="id",
  *         in="path",
