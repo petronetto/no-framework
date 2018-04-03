@@ -2,6 +2,7 @@
 
 namespace Petronetto\Exceptions;
 
+use Petronetto\Config;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Exceptions\ValidationException;
@@ -82,6 +83,8 @@ class ExceptionHandler
      */
     private static function sendResponse(array $data = [], $code = 500): ResponseInterface
     {
-        return new JsonResponse($data, $code);
+        $headers = Config::get('cors');
+
+        return new JsonResponse($data, $code, $headers);
     }
 }
