@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Petronetto\Http;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Manager;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Collection as LeagueCollection;
 use League\Fractal\TransformerAbstract;
+use Petronetto\ORM\ORMInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Paginator
@@ -30,7 +32,7 @@ class Paginator
      * @param  int                  $currentPage
      * @return LengthAwarePaginator
      */
-    private function getPaginator(array $data, int $total, int $perPage, int $currentPage): LengthAwarePaginator
+    private function getPaginator(Collection $data, int $total, int $perPage, int $currentPage): LengthAwarePaginator
     {
         $queryString = $this->getQueryString();
 
@@ -56,7 +58,7 @@ class Paginator
     /**
      * Get the ressults paginated.
      *
-     * @param  array               $data
+     * @param  ORMInterface        $data
      * @param  int                 $total
      * @param  int                 $perPage
      * @param  int                 $currentPage
@@ -64,7 +66,7 @@ class Paginator
      * @return array
      */
     public function paginate(
-        array $data,
+        Collection $data,
         int $total,
         int $perPage,
         int $currentPage,
@@ -72,7 +74,7 @@ class Paginator
     ): array {
         $paginator = $this->getPaginator($data, $total, $perPage, $currentPage);
         $data      = $paginator->getCollection();
-        $resource  = new Collection($data, $transformer);
+        $resource  = new LeagueCollection($data, $transformer);
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
         $fractal = new Manager();
 

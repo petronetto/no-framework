@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace HelloFresh\Controllers\User;
 
-use HelloFresh\Models\User;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Exceptions\ValidationException;

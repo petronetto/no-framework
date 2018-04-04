@@ -5,7 +5,7 @@ use Phinx\Seed\AbstractSeed;
 class RecipesSeeder extends AbstractSeed
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function run()
     {
@@ -18,12 +18,8 @@ class RecipesSeeder extends AbstractSeed
                 'prep_time'   => $faker->numberBetween($min = 10, $max = 120),
                 'difficulty'  => $faker->numberBetween($min = 1, $max = 3),
                 'vegetarian'  => $faker->numberBetween($min = 0, $max = 1),
-                'ratings'     => (function ($faker) {
-                    for ($i = 0; $i < rand(5, 10); $i++) {
-                        $values[] = $faker->numberBetween($min = 1, $max = 5);
-                    }
-                    return json_encode($values);
-                })($faker),
+                'created_at'  => date('Y-m-d H:i:s'),
+                'updated_at'  => date('Y-m-d H:i:s'),
             ];
         }
 

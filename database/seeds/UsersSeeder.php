@@ -18,6 +18,8 @@ class UsersSeeder extends AbstractSeed
             'email'       => 'hello@hellofresh.com',
             'first_name'  => 'Hello',
             'last_name'   => 'Fresh',
+            'created_at'  => date('Y-m-d H:i:s'),
+            'updated_at'  => date('Y-m-d H:i:s'),
         ];
 
         $this->insert('users', $firstUser);
@@ -32,6 +34,8 @@ class UsersSeeder extends AbstractSeed
                 'email'       => $faker->email,
                 'first_name'  => $faker->firstName,
                 'last_name'   => $faker->lastName,
+                'created_at'  => date('Y-m-d H:i:s'),
+                'updated_at'  => date('Y-m-d H:i:s'),
             ];
         }
 

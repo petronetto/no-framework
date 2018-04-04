@@ -9,34 +9,35 @@ use HelloFresh\Transformers\UserTransformer;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item;
 use Petronetto\Exceptions\NotFoundHttpException;
-use Petronetto\Http\Paginator;
 use Petronetto\Exceptions\UnexpectedException;
+use Petronetto\Http\Paginator;
+use Petronetto\ORM\ORMInterface;
 
 class UserService
 {
     /** @var ORMIterface */
-    private $model;
+    private $user;
 
     /**
-     * @param User $model
+     * @param User         $user
      * @param CacheService $cache
-     * @param Paginator $paginator
+     * @param Paginator    $paginator
      */
-    public function __construct(User $model, CacheService $cache, Paginator $paginator)
+    public function __construct(User $user, CacheService $cache, Paginator $paginator)
     {
-        $this->model     = $model;
+        $this->user      = $user;
         $this->cache     = $cache;
         $this->paginator = $paginator;
     }
 
     /**
-     * @param  array $data
+     * @param  array               $data
      * @return array
      * @throws UnexpectedException
      */
     public function create(array $data): array
     {
-        $user = (new User())->fill($data);
+        $user = (new $this->user())->fill($data);
 
         if ($user->save()) {
             // After save our user, we check if
@@ -45,7 +46,7 @@ class UserService
 
             $user = $user->fresh();
 
-            return $this->toResource($user->toArray());
+            return $this->toResource($user);
         }
 
         // If the code reaches this point
@@ -69,11 +70,11 @@ class UserService
             return $cached;
         }
 
-        $query = $this->model->query();
+        $query = $this->user->query();
         $total = $query->count();
         $query->skip(($currentPage - 1) * $perPage);
         $query->take($perPage);
-        $data = $query->orderBy('id', 'DESC')->get()->toArray();
+        $data = $query->orderBy('id', 'DESC')->get();
 
         $users = $this->paginator->paginate(
             $data,
@@ -89,7 +90,7 @@ class UserService
     }
 
     /**
-     * @param  integer $id
+     * @param  integer               $id
      * @throws NotFoundHttpException
      * @return array
      */
@@ -101,14 +102,14 @@ class UserService
             return $cached;
         }
 
-        $user = $this->model->find($id);
+        $user = $this->user->find($id);
 
         // 404 - Not Found
         if (!$user) {
             throw new NotFoundHttpException('User not found');
         }
 
-        $user = $this->toResource($user->toArray());
+        $user = $this->toResource($user);
 
         $this->cache->set($cacheKey, $user);
 
@@ -116,15 +117,15 @@ class UserService
     }
 
     /**
-     * @param array $data
-     * @param int $id
+     * @param  array                 $data
+     * @param  int                   $id
      * @return array
      * @throws NotFoundHttpException
      * @throws UnexpectedException
      */
     public function update(array $data, int $id): array
     {
-        $user = $this->model->find($id);
+        $user = $this->user->find($id);
 
         if (!$user) {
             throw new NotFoundHttpException('User not found');
@@ -138,7 +139,7 @@ class UserService
 
             $user = $user->fresh();
 
-            return $this->toResource($user->toArray());
+            return $this->toResource($user);
         }
 
         throw new UnexpectedException();
@@ -150,7 +151,7 @@ class UserService
      */
     public function delete(int $id): bool
     {
-        $user = $this->model->find($id);
+        $user = $this->user->find($id);
 
         if (!$user) {
             throw new NotFoundHttpException('User not found');
@@ -169,7 +170,7 @@ class UserService
      * @param  array $user
      * @return array
      */
-    private function toResource(array $user): array
+    private function toResource(ORMInterface $user): array
     {
         $item = new Item($user, new UserTransformer());
 

@@ -14,6 +14,7 @@ $router->group('/api/v1/', function ($router) {
     $router->put('recipes/{id}', HelloFresh\Controllers\Recipe\UpdateRecipe::class, [$auth]);
     $router->patch('recipes/{id}', HelloFresh\Controllers\Recipe\UpdateRecipe::class, [$auth]);
     $router->delete('recipes/{id}', HelloFresh\Controllers\Recipe\DeleteRecipe::class, [$auth]);
+    $router->post('recipes/{id}/rating', HelloFresh\Controllers\Recipe\Rating::class);
 
     //----------     User Routes     ----------//
     $router->get('users', HelloFresh\Controllers\User\GetUsers::class, [$auth]);

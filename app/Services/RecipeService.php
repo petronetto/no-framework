@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace HelloFresh\Services;
 
+use HelloFresh\Models\Rating;
 use HelloFresh\Models\Recipe;
 use HelloFresh\Transformers\RecipeTransformer;
+use Illuminate\Database\Eloquent\Collection;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item;
 use Petronetto\Exceptions\NotFoundHttpException;
-use Petronetto\Http\Paginator;
 use Petronetto\Exceptions\UnexpectedException;
+use Petronetto\Http\Paginator;
+use Petronetto\ORM\ORMInterface;
 
 class RecipeService
 {
     /** @var ORMIterface */
-    private $model;
+    private $recipe;
+
+    /** @var ORMIterface */
+    private $rating;
 
     /** @var CacheService */
     private $cache;
@@ -24,25 +30,26 @@ class RecipeService
     private $paginator;
 
     /**
-     * @param Recipe $model
+     * @param Recipe       $recipe
      * @param CacheService $cache
-     * @param Paginator $paginator
+     * @param Paginator    $paginator
      */
-    public function __construct(Recipe $model, CacheService $cache, Paginator $paginator)
+    public function __construct(Recipe $recipe, Rating $rating, CacheService $cache, Paginator $paginator)
     {
-        $this->model     = $model;
-        $this->cache     = $cache;
-        $this->paginator = $paginator;
+        $this->recipe     = $recipe;
+        $this->rating     = $rating;
+        $this->cache      = $cache;
+        $this->paginator  = $paginator;
     }
 
     /**
-     * @param  array $data
+     * @param  array               $data
      * @return array
      * @throws UnexpectedException
      */
     public function create(array $data): array
     {
-        $recipe = (new Recipe())->fill($data);
+        $recipe = (new $this->recipe())->fill($data);
 
         if ($recipe->save()) {
             // After save our recipe, we check if
@@ -51,7 +58,7 @@ class RecipeService
 
             $recipe = $recipe->fresh();
 
-            return $this->toResource($recipe->toArray());
+            return $this->toResource($recipe);
         }
 
         // If the code reaches this point
@@ -73,11 +80,11 @@ class RecipeService
             return $cached;
         }
 
-        $query = $this->model->query();
+        $query = $this->recipe->query();
         $total = $query->count();
         $query->skip(($currentPage - 1) * $perPage);
         $query->take($perPage);
-        $data = $query->orderBy('id', 'DESC')->get()->toArray();
+        $data = $query->orderBy('id', 'DESC')->get();
 
         $recipes = $this->paginate(
             $data,
@@ -92,9 +99,9 @@ class RecipeService
     }
 
     /**
-     * @param string $search
-     * @param integer $currentPage
-     * @param integer $perPage
+     * @param  string  $search
+     * @param  integer $currentPage
+     * @param  integer $perPage
      * @return array
      */
     public function search(string $search, int $currentPage, int $perPage): array
@@ -105,12 +112,12 @@ class RecipeService
             return $cached;
         }
 
-        $result = $this->model->search($search);
-        $total = $result->count();
+        $result = $this->recipe->search($search);
+        $total  = $result->count();
 
         $result->skip(($currentPage - 1) * $perPage);
         $result->take($perPage);
-        $data = $result->get()->toArray();
+        $data = $result->get();
 
         $recipes = $this->paginate(
             $data,
@@ -125,13 +132,13 @@ class RecipeService
     }
 
     /**
-     * @param array $data
-     * @param integer $total
-     * @param integer $perPage
-     * @param integer $currentPage
+     * @param  array   $data
+     * @param  integer $total
+     * @param  integer $perPage
+     * @param  integer $currentPage
      * @return array
      */
-    public function paginate(array $data, int $total, int $perPage, int $currentPage): array
+    public function paginate(Collection $data, int $total, int $perPage, int $currentPage): array
     {
         $recipes = $this->paginator->paginate(
             $data,
@@ -145,7 +152,7 @@ class RecipeService
     }
 
     /**
-     * @param  integer $id
+     * @param  integer               $id
      * @throws NotFoundHttpException
      * @return array
      */
@@ -157,14 +164,14 @@ class RecipeService
             return $cached;
         }
 
-        $recipe = $this->model->find($id);
+        $recipe = $this->recipe->find($id);
 
         // 404 - Not Found
         if (!$recipe) {
             throw new NotFoundHttpException('Recipe not found');
         }
 
-        $recipe = $this->toResource($recipe->toArray());
+        $recipe = $this->toResource($recipe);
 
         $this->cache->set($cacheKey, $recipe);
 
@@ -172,15 +179,15 @@ class RecipeService
     }
 
     /**
-     * @param array $data
-     * @param int $id
+     * @param  array                 $data
+     * @param  int                   $id
      * @return array
      * @throws NotFoundHttpException
      * @throws UnexpectedException
      */
     public function update(array $data, int $id): array
     {
-        $recipe = $this->model->find($id);
+        $recipe = $this->recipe->find($id);
 
         if (!$recipe) {
             throw new NotFoundHttpException('Recipe not found');
@@ -194,7 +201,7 @@ class RecipeService
 
             $recipe = $recipe->fresh();
 
-            return $this->toResource($recipe->toArray());
+            return $this->toResource($recipe);
         }
 
         throw new UnexpectedException();
@@ -206,7 +213,7 @@ class RecipeService
      */
     public function delete(int $id): bool
     {
-        $recipe = $this->model->find($id);
+        $recipe = $this->recipe->find($id);
 
         if (!$recipe) {
             throw new NotFoundHttpException('Recipe not found');
@@ -222,10 +229,36 @@ class RecipeService
     }
 
     /**
+     * @param  integer $id
+     * @param  integer $rating
+     * @return array
+     */
+    public function rating(int $id, int $rating): array
+    {
+        $recipe = $this->recipe->find($id);
+
+        if (!$recipe) {
+            throw new NotFoundHttpException('Recipe not found');
+        }
+
+        $rating = $this->rating->fill(['rating' => $rating]);
+
+        if ($recipe->ratings()->save($rating)) {
+            $this->cache->delKeys('recipes_*');
+
+            $recipe = $recipe->fresh();
+
+            return $this->toResource($recipe);
+        }
+
+        throw new UnexpectedException();
+    }
+
+    /**
      * @param  array $recipe
      * @return array
      */
-    private function toResource(array $recipe): array
+    private function toResource(ORMInterface $recipe): array
     {
         $item = new Item($recipe, new RecipeTransformer());
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HelloFresh\Transformers;
 
 use League\Fractal\TransformerAbstract;
+use Petronetto\ORM\ORMInterface;
 
 /**
  * API Response for Recipes
@@ -18,7 +19,8 @@ use League\Fractal\TransformerAbstract;
  *     @SWG\Property(property="prep_time", type="integer", example=3),
  *     @SWG\Property(property="difficulty", type="integer", example=60),
  *     @SWG\Property(property="vegetarian", type="boolean", example=true),
- *     @SWG\Property(property="average_rating", type="float", example=4.7),
+ *     @SWG\Property(property="created_at", type="string", example="2018-04-04T04:22:52+00:00"),
+ *     @SWG\Property(property="updated_at", type="string", example="2018-04-04T04:22:52+00:00"),
  * )
  */
 class RecipeTransformer extends TransformerAbstract
@@ -27,34 +29,21 @@ class RecipeTransformer extends TransformerAbstract
      * Transform any default or included data
      * into a basic array.
      *
-     * @param  array $recipe
+     * @param  ORMInterface $recipe
      * @return array
      */
-    public function transform(array $recipe)
+    public function transform(ORMInterface $recipe)
     {
         return [
-            'id'              => (int) $recipe['id'],
-            'name'            => $recipe['name'],
-            'description'     => $recipe['description'],
-            'difficulty'      => (int) $recipe['difficulty'],
-            'prep_time'       => $recipe['prep_time'],
-            'vegetarian'      => (bool) $recipe['vegetarian'],
-            'average_rating'  => (float) $this->average((array) $recipe['ratings']),
+            'id'              => (int) $recipe->id,
+            'name'            => $recipe->name,
+            'description'     => $recipe->description,
+            'difficulty'      => (int) $recipe->difficulty,
+            'prep_time'       => $recipe->prep_time,
+            'vegetarian'      => (bool) $recipe->vegetarian,
+            'ratings'         => $recipe->ratings,
+            'created_at'      => $recipe->created_at->format(\DateTime::ATOM),
+            'updated_at'      => $recipe->updated_at->format(\DateTime::ATOM),
         ];
-    }
-
-    /**
-     * @param  array $ratings
-     * @return string
-     */
-    public function average(array $ratings): string
-    {
-        if (count($ratings)) {
-            $avg = (array_sum($ratings) / count($ratings));
-
-            return number_format($avg, 2, '.', '');
-        }
-
-        return "0.0";
     }
 }

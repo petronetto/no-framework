@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HelloFresh\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\hasMany;
 
 /**
  * Class Recipe
@@ -18,18 +19,14 @@ use Illuminate\Database\Eloquent\Builder;
  *     @SWG\Property(property="prep_time", type="integer", example=3),
  *     @SWG\Property(property="difficulty", type="integer", example=60),
  *     @SWG\Property(property="vegetarian", type="boolean", example=true),
- *     @SWG\Property(property="ratings", type="array", @SWG\Items(type="integer", example="[5,4,5,3]")),
+ *     @SWG\Property(property="created_at", type="string", example="2018-04-01 12:00:00"),
+ *     @SWG\Property(property="updated_at", type="string", example="2018-04-01 12:00:00"),
  * )
  */
 class Recipe extends Model
 {
     /** {@inheritdoc} */
     protected $table = 'recipes';
-
-    /** {@inheritdoc} */
-    protected $casts = [
-        'ratings' => 'array',
-    ];
 
     /**
      * The attributes that are mass assignable.
@@ -42,15 +39,22 @@ class Recipe extends Model
         'prep_time',
         'difficulty',
         'vegetarian',
-        'ratings',
     ];
 
     /**
-     * Undocumented function
+     * Ratings relationship
      *
-     * @param  [type] $query
-     * @param  [type] $search
-     * @return void
+     * @return BelongsTo
+     */
+    public function ratings(): hasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    /**
+     * @param  Builder $query
+     * @param  string  $search
+     * @return Builder
      */
     public function scopeSearch(Builder $query, string $search): Builder
     {

@@ -12,12 +12,12 @@ return [
         'default_migration_table' => 'phinxlog',
         'default_database' => 'dev',
         'dev' => [
-            'adapter' => $config['driver'],
-            'host'    => $config['host'],
-            'name'    => $config['database'],
-            'user'    => $config['username'],
-            'pass'    => $config['password'],
-            'port'    => $config['port'],
+            'adapter' => $config[$config['default']]['driver'],
+            'host'    => $config[$config['default']]['host'],
+            'name'    => $config[$config['default']]['database'],
+            'user'    => $config[$config['default']]['username'],
+            'pass'    => $config[$config['default']]['password'],
+            'port'    => $config[$config['default']]['port'],
         ]
     ]
 ];
