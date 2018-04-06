@@ -10,14 +10,24 @@ use SplFileInfo;
 class Config
 {
     /** @var string */
-    private const CONFIG_PATH = __DIR__ . '/../config';
+    private const CONFIGS_DIR = __DIR__ . '/../config';
+
+    /** @var array */
+    private static $instance;
 
     /** @var array */
     private $data = [];
 
-    protected function __construct()
+    /**
+     * @param string $configsDir
+     */
+    protected function __construct(string $configsDir = null)
     {
-        $iterator = new DirectoryIterator(self::CONFIG_PATH);
+        if (!$configsDir) {
+            $configsDir = self::CONFIGS_DIR;
+        }
+
+        $iterator = new DirectoryIterator($configsDir);
         foreach ($iterator as $fileInfo) {
             if ($fileInfo->isDot() || $fileInfo->isDir()) {
                 continue;
@@ -29,9 +39,24 @@ class Config
         }
     }
 
+    /**
+     * @return Config
+     */
+    public static function getInstance(): Config
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * @param SplFileInfo $fileInfo
+     * @return array
+     */
     private function getPathAndFileName(SplFileInfo $fileInfo)
     {
-        return [$fileInfo->getPathname(), trim($fileInfo->getFilename(), '.php')];
+        return [$fileInfo->getPathname(), substr($fileInfo->getFilename(), 0, -4)];
     }
 
     /**
@@ -41,11 +66,11 @@ class Config
      * @param  mixed $default
      * @return mixed
      */
-    public static function get($key, $default = null)
+    public function get($key, $default = null)
     {
         $parts = explode('.', $key);
 
-        $pointer = (new self)->getData();
+        $pointer = $this->data;
         while ($part = array_shift($parts)) {
             if (!array_key_exists($part, $pointer)) {
                 return $default;
@@ -55,13 +80,5 @@ class Config
         }
 
         return $pointer;
-    }
-
-    /**
-     * @return array
-     */
-    public function getData(): array
-    {
-        return $this->data;
     }
 }

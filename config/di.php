@@ -9,6 +9,8 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
 
+// $config = Config::getInstance();
+
 return [
     'emitter'  => DI\create(SapiEmitter::class),
     'response' => DI\create(Response::class),
@@ -22,8 +24,8 @@ return [
         );
     },
     'logger' => function () {
-        $appName   = Config::get('application.name');
-        $logDir    = Config::get('application.logdir');
+        $appName   = config()->get('app.name');
+        $logDir    = config()->get('app.logdir');
         $logger    = new Logger($appName);
         $handler   = new RotatingFileHandler("{$logDir}/{$appName}.log");
         $logger->pushHandler($handler);
@@ -31,7 +33,7 @@ return [
         return $logger;
     },
     'cache' => function () {
-        $redisConf = Config::get('redis');
+        $redisConf = config()->get('redis');
 
         return new Redis([
             'scheme' => $redisConf['scheme'],

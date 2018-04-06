@@ -19,8 +19,9 @@ class AuthService
 
     public function __construct()
     {
-        $this->config           = Config::get('jwt');
-        $this->config['issuer'] = Config::get('application.url');
+        $config                 = Config::getInstance();
+        $this->config           = $config->get('jwt');
+        $this->config['issuer'] = $config->get('app.url');
     }
 
     /**
@@ -61,7 +62,7 @@ class AuthService
     }
 
     /**
-     * @param  string  $token
+     * @param  string                $token
      * @return void
      * @throws UnauthorizedException
      */

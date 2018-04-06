@@ -20,6 +20,9 @@ class Application
     /** @var Router */
     private $router;
 
+    /** @var Config */
+    private $config;
+
     /**
      * Application constructor.
      *
@@ -27,6 +30,7 @@ class Application
      */
     public function __construct()
     {
+        $this->config    = Config::getInstance();
         $this->container = $this->getContainer();
         $this->router    = new Router();
     }
@@ -56,7 +60,7 @@ class Application
             $pipeline = new MiddlewarePipe();
 
             // Putting middlewares in pipeline
-            $middlewares = Config::get('middlewares');
+            $middlewares = $this->config->get('middlewares');
             foreach ($middlewares as $middleware) {
                 $pipeline->pipe(new $middleware());
             }
@@ -92,7 +96,7 @@ class Application
      */
     public function isProd(): bool
     {
-        return (bool) Config::get('application.prod');
+        return (bool) $this->config->get('app.prod');
     }
 
     /**
@@ -105,15 +109,15 @@ class Application
         // If env is prod we'll enable the compilarion
         if ($this->isProd()) {
             return (new \DI\ContainerBuilder())
-                ->enableCompilation(Config::get('application.cachedir'))
+                ->enableCompilation($this->config->get('app.cachedir'))
                 ->useAnnotations(false)
-                ->addDefinitions(Config::get('di'))
+                ->addDefinitions($this->config->get('di'))
                 ->build();
         }
 
         return (new \DI\ContainerBuilder())
                 ->useAnnotations(false)
-                ->addDefinitions(Config::get('di'))
+                ->addDefinitions($this->config->get('di'))
                 ->build();
     }
 }

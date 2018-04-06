@@ -10,15 +10,23 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Router
 {
-    const ROUTES_DIR = __DIR__ . '/../../routes/api.php';
+    /**  @var string */
+    private const ROUTES_FILE = __DIR__ . '/../../routes/api.php';
 
     /**  @var RouteCollector */
     private $collector;
 
-    public function __construct()
+    /**
+     * @param string $routes
+     */
+    public function __construct(string $routes = null)
     {
+        if (!$routes) {
+            $routes = self::ROUTES_FILE;
+        }
+
         $this->collector = $this->getRouteCollector();
-        $this->registerRoutes();
+        $this->registerRoutes($routes);
     }
 
     /**
@@ -99,12 +107,13 @@ class Router
     }
 
     /**
-     * Register the routes
+     * @param string $routes
+     * @return void
      */
-    public function registerRoutes()
+    public function registerRoutes(string $routes)
     {
-        $this->collector->group('', function ($router) {
-            require self::ROUTES_DIR;
+        $this->collector->group('', function ($router) use ($routes) {
+            require $routes;
         });
     }
 }

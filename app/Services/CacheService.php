@@ -48,7 +48,7 @@ class CacheService
         $this->client->set($key, serialize($value));
 
         if (!$ttl) {
-            $ttl = (int) Config::get('redis.ttl');
+            $ttl = (int) (Config::getInstance())->get('redis.ttl');
         }
         $this->client->expire($key, $ttl);
     }

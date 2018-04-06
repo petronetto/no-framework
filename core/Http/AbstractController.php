@@ -50,7 +50,7 @@ abstract class AbstractController implements ControllerInterface
 
         return isset($queryParams['per_page'])
             ? (int) $queryParams['per_page']
-            : (int) Config::get('application.pagesize');
+            : (int) config()->get('app.pagesize');
     }
 
     /**

@@ -8,11 +8,11 @@ error_reporting(E_ALL);
 
 try {
     $app = new Petronetto\Application();
+
+    $app->run();
 } catch (\Throwable $t) {
     // Catches any error that may occurs
     // before method run
     logError($t);
     bootstrapError($t);
 }
-
-$app->run();

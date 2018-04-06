@@ -83,7 +83,7 @@ class ExceptionHandler
      */
     private static function sendResponse(array $data = [], $code = 500): ResponseInterface
     {
-        $headers = Config::get('cors');
+        $headers = (Config::getInstance())->get('cors');
 
         return new JsonResponse($data, $code, $headers);
     }

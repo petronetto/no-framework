@@ -4,7 +4,6 @@ namespace Petronetto\Routing;
 
 use FastRoute\DataGenerator;
 use FastRoute\RouteParser;
-use SplQueue;
 
 class RouteCollector
 {
@@ -21,8 +20,6 @@ class RouteCollector
     private $middlewares;
 
     /**
-     * Constructs a route collector.
-     *
      * @param RouteParser   $routeParser
      * @param DataGenerator $dataGenerator
      */
@@ -35,7 +32,7 @@ class RouteCollector
     }
 
     /**
-     * @param string $handler
+     * @param  string $handler
      * @return array
      */
     public function getRouteMiddlewares($handler): array
@@ -48,14 +45,10 @@ class RouteCollector
     }
 
     /**
-     * Create a route group with a common prefix.
-     *
-     * All routes created in the passed callback will have the given group prefix prepended.
-     *
      * @param string   $prefix
      * @param callable $callback
      */
-    public function group($prefix, callable $callback)
+    public function group(string $prefix, callable $callback): void
     {
         $previousGroupPrefix      = $this->currentGroupPrefix;
         $this->currentGroupPrefix = $previousGroupPrefix . $prefix;
@@ -64,66 +57,56 @@ class RouteCollector
     }
 
     /**
-     * Adds a GET route to the collection
-     *
-     * This is simply an alias of $this->addRoute('GET', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
+     * @param  string $route
+     * @param  string $handler
+     * @param  array  $middlewares
+     * @return void
      */
-    public function get($route, $handler, array $middlewares = [])
+    public function get(string $route, string $handler, array $middlewares = []): void
     {
         $this->addRoute('GET', $route, $handler, $middlewares);
     }
 
     /**
-     * Adds a POST route to the collection
-     *
-     * This is simply an alias of $this->addRoute('POST', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
+     * @param  string $route
+     * @param  string $handler
+     * @param  array  $middlewares
+     * @return void
      */
-    public function post($route, $handler, array $middlewares = [])
+    public function post(string $route, string $handler, array $middlewares = [])
     {
         $this->addRoute('POST', $route, $handler, $middlewares);
     }
 
     /**
-     * Adds a PUT route to the collection
-     *
-     * This is simply an alias of $this->addRoute('PUT', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
+     * @param  string $route
+     * @param  string $handler
+     * @param  array  $middlewares
+     * @return void
      */
-    public function put($route, $handler, array $middlewares = [])
+    public function put(string $route, string $handler, array $middlewares = [])
     {
         $this->addRoute('PUT', $route, $handler, $middlewares);
     }
 
     /**
-     * Adds a DELETE route to the collection
-     *
-     * This is simply an alias of $this->addRoute('DELETE', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
+     * @param  string $route
+     * @param  string $handler
+     * @param  array  $middlewares
+     * @return void
      */
-    public function delete($route, $handler, array $middlewares = [])
+    public function delete(string $route, string $handler, array $middlewares = [])
     {
         $this->addRoute('DELETE', $route, $handler, $middlewares);
     }
 
     /**
-     * Adds a PATCH route to the collection
-     *
-     * This is simply an alias of $this->addRoute('PATCH', $route, $handler)
-     *
-     * @param string $route
-     * @param mixed  $handler
+     * @param  string $route
+     * @param  string $handler
+     * @param  array  $middlewares
+     * @return void
      */
-    public function patch($route, $handler, array $middlewares = [])
+    public function patch(string $route, string $handler, array $middlewares = [])
     {
         $this->addRoute('PATCH', $route, $handler, $middlewares);
     }
@@ -139,13 +122,9 @@ class RouteCollector
     }
 
     /**
-     * Adds a route to the collection.
-     *
-     * The syntax used in the $route string depends on the used route parser.
-     *
-     * @param string   $httpMethod
-     * @param string   $route
-     * @param mixed    $handler
+     * @param string $httpMethod
+     * @param string $route
+     * @param mixed  $handler
      */
     private function addRoute(string $httpMethod, string $route, $handler, array $middlewares = [])
     {
@@ -169,7 +148,7 @@ class RouteCollector
     /**
      * Clean tailing slash form route.
      *
-     * @param string $route
+     * @param  string $route
      * @return string
      */
     private function normalizeRoute(string $route): string

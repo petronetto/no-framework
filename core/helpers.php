@@ -14,6 +14,18 @@ if (!function_exists('app')) {
     }
 }
 
+if (!function_exists('config')) {
+    /**
+     * Get the container instance.
+     *
+     * @return \Petronetto\Config
+     */
+    function config(): \Petronetto\Config
+    {
+        return \Petronetto\Config::getInstance();
+    }
+}
+
 if (!function_exists('container')) {
     /**
      * Get the container instance.
@@ -46,7 +58,7 @@ if (!function_exists('isProd')) {
      */
     function isProd(): bool
     {
-        return (bool) \Petronetto\Config::get('application.prod');
+        return (bool) \Petronetto\Config::get('app.prod');
     }
 }
 

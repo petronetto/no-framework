@@ -6,6 +6,7 @@ namespace HelloFresh\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use Petronetto\ORM\ORMInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * API Response for Recipes
@@ -19,6 +20,7 @@ use Petronetto\ORM\ORMInterface;
  *     @SWG\Property(property="prep_time", type="integer", example=3),
  *     @SWG\Property(property="difficulty", type="integer", example=60),
  *     @SWG\Property(property="vegetarian", type="boolean", example=true),
+ *     @SWG\Property(property="average_rating", type="flot", example=4.5),
  *     @SWG\Property(property="created_at", type="string", example="2018-04-04T04:22:52+00:00"),
  *     @SWG\Property(property="updated_at", type="string", example="2018-04-04T04:22:52+00:00"),
  * )
@@ -41,9 +43,24 @@ class RecipeTransformer extends TransformerAbstract
             'difficulty'      => (int) $recipe->difficulty,
             'prep_time'       => $recipe->prep_time,
             'vegetarian'      => (bool) $recipe->vegetarian,
-            'ratings'         => $recipe->ratings,
+            'average_rating'  => (float) $this->average($recipe->ratings),
             'created_at'      => $recipe->created_at->format(\DateTime::ATOM),
             'updated_at'      => $recipe->updated_at->format(\DateTime::ATOM),
         ];
+    }
+
+    /**
+     * @param  Collection $ratings
+     * @return string
+     */
+    public function average(Collection $ratings): string
+    {
+        $avg = $ratings->avg('rating');
+
+        if ($avg) {
+            return number_format($avg, 2, '.', '');
+        }
+
+        return "0";
     }
 }
