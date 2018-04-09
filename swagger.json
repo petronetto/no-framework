@@ -490,6 +490,65 @@
                 ]
             }
         },
+        "/recipes/{id}/rating": {
+            "post": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Create a new rating for a recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Rating payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "rating": {
+                                    "description": "Create a new rating for a recipe",
+                                    "type": "integer",
+                                    "example": 5
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "description": "Create a new rating for a recipe",
+                            "properties": {
+                                "data": {
+                                    "description": "Create a new rating for a recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": ";)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -725,11 +784,6 @@
                         "required": true,
                         "schema": {
                             "properties": {
-                                "id": {
-                                    "description": "Update one user",
-                                    "type": "integer",
-                                    "example": 10
-                                },
                                 "username": {
                                     "description": "Update one user",
                                     "type": "string",
@@ -749,16 +803,6 @@
                                     "description": "Update one user",
                                     "type": "string",
                                     "example": "Doe"
-                                },
-                                "password": {
-                                    "description": "Update one user",
-                                    "type": "string",
-                                    "example": "secret"
-                                },
-                                "password_confirmation": {
-                                    "description": "Update one user",
-                                    "type": "string",
-                                    "example": "secret"
                                 }
                             }
                         }
@@ -855,11 +899,6 @@
                         "required": true,
                         "schema": {
                             "properties": {
-                                "id": {
-                                    "description": "Update one user",
-                                    "type": "integer",
-                                    "example": 10
-                                },
                                 "username": {
                                     "description": "Update one user",
                                     "type": "string",
@@ -879,16 +918,6 @@
                                     "description": "Update one user",
                                     "type": "string",
                                     "example": "Doe"
-                                },
-                                "password": {
-                                    "description": "Update one user",
-                                    "type": "string",
-                                    "example": "secret"
-                                },
-                                "password_confirmation": {
-                                    "description": "Update one user",
-                                    "type": "string",
-                                    "example": "secret"
                                 }
                             }
                         }
@@ -988,6 +1017,31 @@
             },
             "type": "object"
         },
+        "Rating": {
+            "properties": {
+                "id": {
+                    "description": "Class Rating",
+                    "type": "integer",
+                    "example": 1
+                },
+                "rating": {
+                    "description": "Class Rating",
+                    "type": "integer",
+                    "example": 5
+                },
+                "created_at": {
+                    "description": "Class Rating",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                },
+                "updated_at": {
+                    "description": "Class Rating",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                }
+            },
+            "type": "object"
+        },
         "Recipe": {
             "properties": {
                 "id": {
@@ -1020,13 +1074,15 @@
                     "type": "boolean",
                     "example": true
                 },
-                "ratings": {
+                "created_at": {
                     "description": "Class Recipe",
-                    "type": "array",
-                    "items": {
-                        "type": "integer",
-                        "example": "[5,4,5,3]"
-                    }
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                },
+                "updated_at": {
+                    "description": "Class Recipe",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
                 }
             },
             "type": "object"
@@ -1062,6 +1118,16 @@
                     "description": "Class User",
                     "type": "string",
                     "example": "secret"
+                },
+                "created_at": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                },
+                "updated_at": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
                 }
             },
             "type": "object"
@@ -1100,8 +1166,18 @@
                 },
                 "average_rating": {
                     "description": "API Response for Recipes",
-                    "type": "float",
-                    "example": 4.7
+                    "type": "flot",
+                    "example": 4.5
+                },
+                "created_at": {
+                    "description": "API Response for Recipes",
+                    "type": "string",
+                    "example": "2018-04-04T04:22:52+00:00"
+                },
+                "updated_at": {
+                    "description": "API Response for Recipes",
+                    "type": "string",
+                    "example": "2018-04-04T04:22:52+00:00"
                 }
             },
             "type": "object"
@@ -1132,6 +1208,16 @@
                     "description": "API Response for Users",
                     "type": "string",
                     "example": "Doe"
+                },
+                "created_at": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "2018-04-04T04:22:52+00:00"
+                },
+                "updated_at": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "2018-04-04T04:22:52+00:00"
                 }
             },
             "type": "object"
