@@ -43,24 +43,9 @@ class RecipeTransformer extends TransformerAbstract
             'difficulty'      => (int) $recipe->difficulty,
             'prep_time'       => $recipe->prep_time,
             'vegetarian'      => (bool) $recipe->vegetarian,
-            'average_rating'  => (float) $this->average($recipe->ratings),
+            'average_rating'  => (float) round($recipe->ratings->avg('rating'), 2),
             'created_at'      => $recipe->created_at->format(\DateTime::ATOM),
             'updated_at'      => $recipe->updated_at->format(\DateTime::ATOM),
         ];
-    }
-
-    /**
-     * @param  Collection $ratings
-     * @return string
-     */
-    public function average(Collection $ratings): string
-    {
-        $avg = $ratings->avg('rating');
-
-        if ($avg) {
-            return number_format($avg, 2, '.', '');
-        }
-
-        return "0";
     }
 }

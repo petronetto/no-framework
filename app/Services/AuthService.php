@@ -15,13 +15,21 @@ use Petronetto\Exceptions\UnauthorizedException;
 class AuthService
 {
     /** @var array */
-    private $config;
+    private $config = [];
 
     public function __construct()
     {
         $config                 = Config::getInstance();
         $this->config           = $config->get('jwt');
         $this->config['issuer'] = $config->get('app.url');
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfigs(): array
+    {
+        return $this->config;
     }
 
     /**

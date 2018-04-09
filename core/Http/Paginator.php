@@ -24,38 +24,6 @@ class Paginator
     }
 
     /**
-     * Create a LengthAwarePaginator.
-     *
-     * @param  array                $data
-     * @param  int                  $total
-     * @param  int                  $perPage
-     * @param  int                  $currentPage
-     * @return LengthAwarePaginator
-     */
-    private function getPaginator(Collection $data, int $total, int $perPage, int $currentPage): LengthAwarePaginator
-    {
-        $queryString = $this->getQueryString();
-
-        if (array_key_exists('page', $queryString)) {
-            unset($queryString['page']);
-        }
-
-        $offset      = ($currentPage - 1) * $perPage;
-        $options     = [
-            'path'  => $this->request->getUri()->getPath(),
-            'query' => $queryString,
-        ];
-
-        return new LengthAwarePaginator(
-            $data,
-            $total,
-            $perPage,
-            $currentPage,
-            $options
-        );
-    }
-
-    /**
      * Get the ressults paginated.
      *
      * @param  ORMInterface        $data
@@ -95,5 +63,37 @@ class Paginator
         }
 
         return $queryString;
+    }
+
+    /**
+     * Create a LengthAwarePaginator.
+     *
+     * @param  array                $data
+     * @param  int                  $total
+     * @param  int                  $perPage
+     * @param  int                  $currentPage
+     * @return LengthAwarePaginator
+     */
+    private function getPaginator(Collection $data, int $total, int $perPage, int $currentPage): LengthAwarePaginator
+    {
+        $queryString = $this->getQueryString();
+
+        if (array_key_exists('page', $queryString)) {
+            unset($queryString['page']);
+        }
+
+        $offset      = ($currentPage - 1) * $perPage;
+        $options     = [
+            'path'  => $this->request->getUri()->getPath(),
+            'query' => $queryString,
+        ];
+
+        return new LengthAwarePaginator(
+            $data,
+            $total,
+            $perPage,
+            $currentPage,
+            $options
+        );
     }
 }

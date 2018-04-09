@@ -8,7 +8,7 @@ use HelloFresh\Models\User;
 use HelloFresh\Transformers\UserTransformer;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item;
-use Petronetto\Exceptions\NotFoundHttpException;
+use Petronetto\Exceptions\NotFoundException;
 use Petronetto\Exceptions\UnexpectedException;
 use Petronetto\Http\Paginator;
 use Petronetto\ORM\ORMInterface;
@@ -62,7 +62,7 @@ class UserService
      * @param  int   $perPage
      * @return array
      */
-    public function paginate(int $currentPage, int $perPage): array
+    public function get(int $currentPage, int $perPage): array
     {
         $cacheKey = "users_page_{$currentPage}_per_page_{$perPage}";
 
@@ -70,11 +70,11 @@ class UserService
             return $cached;
         }
 
-        $query = $this->user->query();
-        $total = $query->count();
-        $query->skip(($currentPage - 1) * $perPage);
-        $query->take($perPage);
-        $data = $query->orderBy('id', 'DESC')->get();
+        $total = $this->user->count();
+        $data  = $this->user->skip(($currentPage - 1) * $perPage)
+                    ->take($perPage)
+                    ->orderBy('id', 'DESC')
+                    ->get();
 
         $users = $this->paginator->paginate(
             $data,
@@ -91,7 +91,7 @@ class UserService
 
     /**
      * @param  integer               $id
-     * @throws NotFoundHttpException
+     * @throws NotFoundException
      * @return array
      */
     public function getById(int $id): array
@@ -106,7 +106,7 @@ class UserService
 
         // 404 - Not Found
         if (!$user) {
-            throw new NotFoundHttpException('User not found');
+            throw new NotFoundException('User not found');
         }
 
         $user = $this->toResource($user);
@@ -120,7 +120,7 @@ class UserService
      * @param  array                 $data
      * @param  int                   $id
      * @return array
-     * @throws NotFoundHttpException
+     * @throws NotFoundException
      * @throws UnexpectedException
      */
     public function update(array $data, int $id): array
@@ -128,7 +128,7 @@ class UserService
         $user = $this->user->find($id);
 
         if (!$user) {
-            throw new NotFoundHttpException('User not found');
+            throw new NotFoundException('User not found');
         }
 
         $user->fill($data);
@@ -154,7 +154,7 @@ class UserService
         $user = $this->user->find($id);
 
         if (!$user) {
-            throw new NotFoundHttpException('User not found');
+            throw new NotFoundException('User not found');
         }
 
         if ($user->delete()) {

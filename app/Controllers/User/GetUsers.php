@@ -54,7 +54,7 @@ class GetUsers extends UsersBaseController
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $users = $this->service->paginate(
+        $users = $this->service->get(
             $this->getCurrentPage($request),
             $this->getPageSize($request)
         );

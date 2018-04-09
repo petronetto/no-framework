@@ -131,4 +131,5 @@ tests/coverage/
 *.log
 *.sock
 .env
+.sonar
 tmp

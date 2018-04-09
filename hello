@@ -101,7 +101,8 @@ function rollback {
 }
 
 function run_tests {
-    run_inside_docker vendor/bin/phpunit --colors=always $@
+    docker exec -it -e DB_CONNECTION=testing ${APP_CONTAINER_NAME} \
+        vendor/bin/phpunit --colors=always $@
 }
 
 function create_docker_network {
@@ -202,10 +203,6 @@ case $1 in
     ;;
 "up")
     up $@
-    exit 0
-    ;;
-"text")
-    pretty_print $@
     exit 0
     ;;
 "hellofresh")

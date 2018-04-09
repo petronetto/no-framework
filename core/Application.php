@@ -28,11 +28,11 @@ class Application
      *
      * @param ContainerInterface $container
      */
-    public function __construct()
+    public function __construct(string $routes = null)
     {
         $this->config    = Config::getInstance();
-        $this->container = $this->getContainer();
-        $this->router    = new Router();
+        $this->container = $this->makeContainer();
+        $this->router    = new Router($routes);
     }
 
     /**
@@ -60,7 +60,7 @@ class Application
             $pipeline = new MiddlewarePipe();
 
             // Putting middlewares in pipeline
-            $middlewares = $this->config->get('middlewares');
+            $middlewares = $this->config->get('middlewares', []);
             foreach ($middlewares as $middleware) {
                 $pipeline->pipe(new $middleware());
             }
@@ -96,7 +96,7 @@ class Application
      */
     public function isProd(): bool
     {
-        return (bool) $this->config->get('app.prod');
+        return (bool) $this->config->get('app.prod', true);
     }
 
     /**

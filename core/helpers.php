@@ -10,7 +10,7 @@ if (!function_exists('app')) {
      */
     function app(): \Petronetto\Application
     {
-        return require __DIR__ . '/../bootstrap/app.php';
+        return new \Petronetto\Application();
     }
 }
 
@@ -120,6 +120,27 @@ if (!function_exists('logError')) {
         );
 
         $file = __DIR__ . '/../log/app/error.log';
+
+        $myfile = file_put_contents($file, $message.PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+}
+
+if (!function_exists('simpleLog')) {
+    /**
+     * A simple logger to use in application bootstrap.
+     *
+     * @param  string $message
+     * @return void
+     */
+    function simpleLog(string $message): void
+    {
+        $message = sprintf(
+            "[%s] Log: %s",
+            date('Y-m-d H:i:s'),
+            $message
+        );
+
+        $file = __DIR__ . '/../log/app/simple.log';
 
         $myfile = file_put_contents($file, $message.PHP_EOL, FILE_APPEND | LOCK_EX);
     }

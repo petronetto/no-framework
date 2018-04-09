@@ -14,7 +14,7 @@ return [
     ],
     'testing'      => [
         'driver'   => 'sqlite',
-        'database' => ':memory:',
+        'database' => __DIR__ . '/../tests/db.sqlite',
         'prefix'   => '',
     ],
 ];

@@ -9,7 +9,7 @@ use Predis\Client as Redis;
 
 class CacheService
 {
-    /** @var Predis\Client  */
+    /** @var Predis\Client */
     protected $client;
 
     /**

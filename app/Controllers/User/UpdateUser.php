@@ -33,13 +33,10 @@ use Respect\Validation\Validator as v;
  *         description="User payload",
  *         required=true,
  *         @SWG\Schema(
- *             @SWG\Property(property="id", type="integer", example=10),
  *             @SWG\Property(property="username", type="string", example="jhondoe"),
  *             @SWG\Property(property="email", type="string", example="john@doe.com"),
  *             @SWG\Property(property="first_name", type="string", example="Jhon"),
  *             @SWG\Property(property="last_name", type="string", example="Doe"),
- *             @SWG\Property(property="password", type="string", example="secret"),
- *             @SWG\Property(property="password_confirmation", type="string", example="secret"),
  *         ),
  *     ),
  *     @SWG\Response(
@@ -71,13 +68,10 @@ use Respect\Validation\Validator as v;
  *         description="User payload",
  *         required=true,
  *         @SWG\Schema(
- *             @SWG\Property(property="id", type="integer", example=10),
  *             @SWG\Property(property="username", type="string", example="jhondoe"),
  *             @SWG\Property(property="email", type="string", example="john@doe.com"),
  *             @SWG\Property(property="first_name", type="string", example="Jhon"),
  *             @SWG\Property(property="last_name", type="string", example="Doe"),
- *             @SWG\Property(property="password", type="string", example="secret"),
- *             @SWG\Property(property="password_confirmation", type="string", example="secret"),
  *         ),
  *     ),
  *     @SWG\Response(

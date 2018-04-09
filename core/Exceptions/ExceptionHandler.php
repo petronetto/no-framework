@@ -20,6 +20,7 @@ class ExceptionHandler
         bool $isProd
     ): ResponseInterface {
         switch ($t) {
+            case $t instanceof NotFoundException:
             case $t instanceof NotFoundHttpException:
                 $data = [
                     'type'      => get_class($t),

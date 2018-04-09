@@ -18,6 +18,7 @@ class Jwt implements MiddlewareInterface
      * @param  ServerRequestInterface  $request
      * @param  RequestHandlerInterface $handler
      * @return ResponseInterface
+     * @throws UnauthorizedException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

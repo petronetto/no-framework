@@ -9,8 +9,6 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
 
-// $config = Config::getInstance();
-
 return [
     'emitter'  => DI\create(SapiEmitter::class),
     'response' => DI\create(Response::class),

@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class Router
 {
     /**  @var string */
-    private const ROUTES_FILE = __DIR__ . '/../../routes/api.php';
+    const ROUTES_FILE = __DIR__ . '/../../routes/api.php';
 
     /**  @var RouteCollector */
     private $collector;
@@ -26,31 +26,7 @@ class Router
         }
 
         $this->collector = $this->getRouteCollector();
-        $this->registerRoutes($routes);
-    }
-
-    /**
-     * Get the dispatcher
-     *
-     * @return RouteCollector
-     */
-    private function getRouteCollector(): RouteCollector
-    {
-        if ($this->collector === null) {
-            $this->collector = new RouteCollector(new Std(), new DataGenerator());
-        }
-
-        return $this->collector;
-    }
-
-    /**
-     * Get the dispatcher
-     *
-     * @return Dispatcher
-     */
-    private function getDispatcher(): Dispatcher
-    {
-        return new GroupCountBasedDispatcher($this->collector->getData());
+        $this->registerRoutes(realpath($routes));
     }
 
     /**
@@ -96,6 +72,31 @@ class Router
     }
 
     /**
+     * @param string $routes
+     * @return void
+     */
+    public function registerRoutes(string $routes)
+    {
+        $this->collector->group('', function ($router) use ($routes) {
+            require $routes;
+        });
+    }
+
+    /**
+     * Get the dispatcher
+     *
+     * @return RouteCollector
+     */
+    private function getRouteCollector(): RouteCollector
+    {
+        if ($this->collector === null) {
+            $this->collector = new RouteCollector(new Std(), new DataGenerator());
+        }
+
+        return $this->collector;
+    }
+
+    /**
      * @param  ServerRequestInterface $request
      * @return string
      */
@@ -107,13 +108,12 @@ class Router
     }
 
     /**
-     * @param string $routes
-     * @return void
+     * Get the dispatcher
+     *
+     * @return Dispatcher
      */
-    public function registerRoutes(string $routes)
+    private function getDispatcher(): Dispatcher
     {
-        $this->collector->group('', function ($router) use ($routes) {
-            require $routes;
-        });
+        return new GroupCountBasedDispatcher($this->collector->getData());
     }
 }

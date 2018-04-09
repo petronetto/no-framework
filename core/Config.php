@@ -10,34 +10,13 @@ use SplFileInfo;
 class Config
 {
     /** @var string */
-    private const CONFIGS_DIR = __DIR__ . '/../config';
+    const PATH = __DIR__ . '/../config';
 
-    /** @var array */
+    /** @var Config */
     private static $instance;
 
     /** @var array */
-    private $data = [];
-
-    /**
-     * @param string $configsDir
-     */
-    protected function __construct(string $configsDir = null)
-    {
-        if (!$configsDir) {
-            $configsDir = self::CONFIGS_DIR;
-        }
-
-        $iterator = new DirectoryIterator($configsDir);
-        foreach ($iterator as $fileInfo) {
-            if ($fileInfo->isDot() || $fileInfo->isDir()) {
-                continue;
-            }
-
-            [$pathname, $filename] = $this->getPathAndFileName($fileInfo);
-
-            $this->data[$filename] = require $pathname;
-        }
-    }
+    private static $data = [];
 
     /**
      * @return Config
@@ -47,16 +26,8 @@ class Config
         if (!isset(self::$instance)) {
             self::$instance = new self();
         }
-        return self::$instance;
-    }
 
-    /**
-     * @param SplFileInfo $fileInfo
-     * @return array
-     */
-    private function getPathAndFileName(SplFileInfo $fileInfo)
-    {
-        return [$fileInfo->getPathname(), substr($fileInfo->getFilename(), 0, -4)];
+        return self::$instance;
     }
 
     /**
@@ -66,11 +37,15 @@ class Config
      * @param  mixed $default
      * @return mixed
      */
-    public function get($key, $default = null)
+    public static function get($key, $default = null)
     {
+        if (!self::$data) {
+            self::$instance->loadData();
+        }
+
         $parts = explode('.', $key);
 
-        $pointer = $this->data;
+        $pointer = self::$data;
         while ($part = array_shift($parts)) {
             if (!array_key_exists($part, $pointer)) {
                 return $default;
@@ -80,5 +55,31 @@ class Config
         }
 
         return $pointer;
+    }
+
+    /**
+     * @return void
+     */
+    private function loadData()
+    {
+        $iterator = new DirectoryIterator(realpath(self::PATH));
+        foreach ($iterator as $fileInfo) {
+            if ($fileInfo->isDot() || $fileInfo->isDir()) {
+                continue;
+            }
+
+            list($pathname, $filename) = $this->getPathAndFileName($fileInfo);
+
+            self::$data[$filename] = require $pathname;
+        }
+    }
+
+    /**
+     * @param SplFileInfo $fileInfo
+     * @return array
+     */
+    private function getPathAndFileName(SplFileInfo $fileInfo): array
+    {
+        return [$fileInfo->getPathname(), substr($fileInfo->getFilename(), 0, -4)];
     }
 }

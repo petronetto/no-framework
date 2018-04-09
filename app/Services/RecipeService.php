@@ -10,7 +10,7 @@ use HelloFresh\Transformers\RecipeTransformer;
 use Illuminate\Database\Eloquent\Collection;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item;
-use Petronetto\Exceptions\NotFoundHttpException;
+use Petronetto\Exceptions\NotFoundException;
 use Petronetto\Exceptions\UnexpectedException;
 use Petronetto\Http\Paginator;
 use Petronetto\ORM\ORMInterface;
@@ -80,11 +80,11 @@ class RecipeService
             return $cached;
         }
 
-        $query = $this->recipe->query();
-        $total = $query->count();
-        $query->skip(($currentPage - 1) * $perPage);
-        $query->take($perPage);
-        $data = $query->orderBy('id', 'DESC')->get();
+        $total = $this->recipe->count();
+        $data  = $this->recipe->skip(($currentPage - 1) * $perPage)
+                    ->take($perPage)
+                    ->orderBy('id', 'DESC')
+                    ->get();
 
         $recipes = $this->paginate(
             $data,
@@ -115,9 +115,9 @@ class RecipeService
         $result = $this->recipe->search($search);
         $total  = $result->count();
 
-        $result->skip(($currentPage - 1) * $perPage);
-        $result->take($perPage);
-        $data = $result->get();
+        $data = $result->skip(($currentPage - 1) * $perPage)
+            ->take($perPage)
+            ->get();
 
         $recipes = $this->paginate(
             $data,
@@ -132,28 +132,8 @@ class RecipeService
     }
 
     /**
-     * @param  array   $data
-     * @param  integer $total
-     * @param  integer $perPage
-     * @param  integer $currentPage
-     * @return array
-     */
-    public function paginate(Collection $data, int $total, int $perPage, int $currentPage): array
-    {
-        $recipes = $this->paginator->paginate(
-            $data,
-            $total,
-            $perPage,
-            $currentPage,
-            new RecipeTransformer()
-        );
-
-        return $recipes;
-    }
-
-    /**
      * @param  integer               $id
-     * @throws NotFoundHttpException
+     * @throws NotFoundException
      * @return array
      */
     public function getById(int $id): array
@@ -168,7 +148,7 @@ class RecipeService
 
         // 404 - Not Found
         if (!$recipe) {
-            throw new NotFoundHttpException('Recipe not found');
+            throw new NotFoundException('Recipe not found');
         }
 
         $recipe = $this->toResource($recipe);
@@ -182,7 +162,7 @@ class RecipeService
      * @param  array                 $data
      * @param  int                   $id
      * @return array
-     * @throws NotFoundHttpException
+     * @throws NotFoundException
      * @throws UnexpectedException
      */
     public function update(array $data, int $id): array
@@ -190,7 +170,7 @@ class RecipeService
         $recipe = $this->recipe->find($id);
 
         if (!$recipe) {
-            throw new NotFoundHttpException('Recipe not found');
+            throw new NotFoundException('Recipe not found');
         }
 
         $recipe->fill($data);
@@ -216,7 +196,7 @@ class RecipeService
         $recipe = $this->recipe->find($id);
 
         if (!$recipe) {
-            throw new NotFoundHttpException('Recipe not found');
+            throw new NotFoundException('Recipe not found');
         }
 
         if ($recipe->delete()) {
@@ -238,7 +218,7 @@ class RecipeService
         $recipe = $this->recipe->find($id);
 
         if (!$recipe) {
-            throw new NotFoundHttpException('Recipe not found');
+            throw new NotFoundException('Recipe not found');
         }
 
         $rating = $this->rating->fill(['rating' => $rating]);
@@ -252,6 +232,26 @@ class RecipeService
         }
 
         throw new UnexpectedException();
+    }
+
+    /**
+     * @param  array   $data
+     * @param  integer $total
+     * @param  integer $perPage
+     * @param  integer $currentPage
+     * @return array
+     */
+    private function paginate(Collection $data, int $total, int $perPage, int $currentPage): array
+    {
+        $recipes = $this->paginator->paginate(
+            $data,
+            $total,
+            $perPage,
+            $currentPage,
+            new RecipeTransformer()
+        );
+
+        return $recipes;
     }
 
     /**

@@ -18,6 +18,10 @@ return [
             'user'    => $config[$config['default']]['username'],
             'pass'    => $config[$config['default']]['password'],
             'port'    => $config[$config['default']]['port'],
+        ],
+        'testing' => [
+            'adapter' => 'sqlite',
+            'name'    => $config[$config['default']]['database'],
         ]
     ]
 ];
