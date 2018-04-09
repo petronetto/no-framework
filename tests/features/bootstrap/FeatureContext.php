@@ -1,5 +1,6 @@
 <?php
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
 use GuzzleHttp\Client;
 
@@ -25,7 +26,7 @@ class FeatureContext implements Context
         $this->password = $password;
 
         $this->http = new Client([
-            'base_uri'    => 'http://localhost:8080/api/v1/',
+            'base_uri'    => 'http://hellofresh.nginx:8080/api/v1/',
             'http_errors' => false,
         ]);
     }
@@ -354,5 +355,55 @@ class FeatureContext implements Context
     public function iGetAndSeeTheErrorMessage($code)
     {
         $this->checkStatusCode($code);
+    }
+
+    /**
+     * @Given I an anonymous user
+     */
+    public function iAnAnonymousUser()
+    {
+        return true;
+    }
+
+    /**
+     * @When I submit the rateing for the recipe
+     */
+    public function iSubmitTheRateingForTheRecipe()
+    {
+        $recipes = $this->http->get('recipes');
+        $id = json_decode($recipes->getBody(), true)['data'][0]['id'];
+
+        $this->response = $this->http->post("recipes/{$id}/rating", [
+            'json' => [
+                'rating' => 5,
+            ]
+        ]);
+    }
+
+    /**
+     * @Then I get :code and see the new rating average for the recipe
+     */
+    public function iGetAndSeeTheNewRatingAverageForTheRecipe($code)
+    {
+        $this->checkStatusCode($code);
+        $data = $this->getResponseData();
+
+        if ($data['data']['average_rating'] != 5) {
+            throw new \Exception('Spected "average_rating" to be equals 5, but got ' . $data['data']['average_rating']);
+        }
+    }
+
+    /**
+     * @Then I see the new recipe with new stats in recipes first page
+     */
+    public function iSeeTheNewRecipeWithNewStatsInRecipesFirstPage()
+    {
+        $this->response = $this->http->get('recipes');
+        $this->checkStatusCode(206);
+        $data = $this->getResponseData();
+
+        if ($data['data'][0]['average_rating'] != 5) {
+            throw new \Exception('Spected "average_rating" to be equals 5, but got ' . $data['data']['average_rating']);
+        }
     }
 }

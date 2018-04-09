@@ -101,8 +101,13 @@ function rollback {
 }
 
 function run_tests {
+    print_info "Running PHPunit Tests"
     docker exec -it -e DB_CONNECTION=testing ${APP_CONTAINER_NAME} \
         vendor/bin/phpunit --colors=always $@
+
+    print_info "Running Behat Tests"
+    docker exec -it ${APP_CONTAINER_NAME} \
+        vendor/bin/behat --colors
 }
 
 function create_docker_network {
