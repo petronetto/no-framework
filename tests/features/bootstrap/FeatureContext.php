@@ -1,7 +1,6 @@
 <?php
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Tester\Exception\PendingException;
 use GuzzleHttp\Client;
 
 class FeatureContext implements Context
@@ -26,7 +25,8 @@ class FeatureContext implements Context
         $this->password = $password;
 
         $this->http = new Client([
-            'base_uri' => 'http://localhost:8080/api/v1/'
+            'base_uri'    => 'http://localhost:8080/api/v1/',
+            'http_errors' => false,
         ]);
     }
 
@@ -243,6 +243,7 @@ class FeatureContext implements Context
 
     /**
      * @Then I get :code and see the new recipe data
+     * @param mixed $code
      */
     public function iGetAndSeeTheNewRecipeData($code)
     {
@@ -300,7 +301,7 @@ class FeatureContext implements Context
     public function iSeeTheNewRecipeInRecipesFirstPage()
     {
         $this->response = $this->http->get('recipes');
-        $data = $this->getResponseData();
+        $data           = $this->getResponseData();
 
         $data = $data['data'][0];
 
@@ -320,5 +321,38 @@ class FeatureContext implements Context
         if ($data != $createdRecipe) {
             throw new \Exception('The response recipe has not equal data in the recipes first page.');
         }
+    }
+
+    /**
+     * @Given I am an unautheticated user
+     */
+    public function iAmAnUnautheticatedUser()
+    {
+        return true;
+    }
+
+    /**
+     * @When I submit the new recipe without JWT token
+     */
+    public function iSubmitTheNewRecipeWithoutJwtToken()
+    {
+        $this->response = $this->http->post('recipes', [
+            'json' => [
+                'name'        => 'My fabulous recipe',
+                'description' => 'A really long description for this incredible recipe',
+                'difficulty'  => 2,
+                'prep_time'   => 60,
+                'vegetarian'  => false
+            ]
+        ]);
+    }
+
+    /**
+     * @Then I get :code and see the error message
+     * @param mixed $code
+     */
+    public function iGetAndSeeTheErrorMessage($code)
+    {
+        $this->checkStatusCode($code);
     }
 }
