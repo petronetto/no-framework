@@ -1,0 +1,1290 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "App Recipes API",
+        "description": "App Recipes API - By Juliano Petronetto",
+        "contact": {
+            "name": "Juliano Petronetto",
+            "url": "http://petronetto.com.br"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/auth": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get a JWT Token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Auth payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "username": {
+                                    "description": "Get a JWT Token",
+                                    "type": "string",
+                                    "example": "nofw"
+                                },
+                                "password": {
+                                    "description": "Get a JWT Token",
+                                    "type": "string",
+                                    "example": "supersecret"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JWT Token",
+                        "schema": {
+                            "property": "token",
+                            "description": "Get a JWT Token",
+                            "type": "string",
+                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0..."
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    }
+                }
+            }
+        },
+        "/cache": {
+            "delete": {
+                "tags": [
+                    "cache"
+                ],
+                "summary": "Delete the application cache",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "An empty response"
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/recipes": {
+            "get": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Get the recipes paginated or search for a recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "A term for a full text search",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Page size",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "206": {
+                        "description": "A paginated array of Recipes",
+                        "schema": {
+                            "properties": {
+                                "data": {
+                                    "description": "Get the recipes paginated or search for a recipe",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/RecipeApiResponse"
+                                    }
+                                },
+                                "meta": {
+                                    "description": "Get the recipes paginated or search for a recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/Meta"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Create a new recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Recipe payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "description": "Create a new recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum"
+                                },
+                                "description": {
+                                    "description": "Create a new recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum dolar net est"
+                                },
+                                "difficulty": {
+                                    "description": "Create a new recipe",
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "prep_time": {
+                                    "description": "Create a new recipe",
+                                    "type": "integer",
+                                    "example": 60
+                                },
+                                "vegetarian": {
+                                    "description": "Create a new recipe",
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "The created recipe",
+                        "schema": {
+                            "description": "Create a new recipe",
+                            "properties": {
+                                "data": {
+                                    "description": "Create a new recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/recipes/{id}": {
+            "get": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Get one recipes by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recipe id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The recieved recipe",
+                        "schema": {
+                            "description": "Get one recipes by id",
+                            "properties": {
+                                "data": {
+                                    "description": "Get one recipes by id",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Update one recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recipe id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Recipe payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "description": "Update one recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum"
+                                },
+                                "description": {
+                                    "description": "Update one recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum dolar net est"
+                                },
+                                "difficulty": {
+                                    "description": "Update one recipe",
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "prep_time": {
+                                    "description": "Update one recipe",
+                                    "type": "integer",
+                                    "example": 60
+                                },
+                                "vegetarian": {
+                                    "description": "Update one recipe",
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The updated recipe",
+                        "schema": {
+                            "description": "Update one recipe",
+                            "properties": {
+                                "data": {
+                                    "description": "Update one recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Delete one recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recipe id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "An empty response",
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Update one recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recipe id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Recipe payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "description": "Update one recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum"
+                                },
+                                "description": {
+                                    "description": "Update one recipe",
+                                    "type": "string",
+                                    "example": "Lorem ipsum dolar net est"
+                                },
+                                "difficulty": {
+                                    "description": "Update one recipe",
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "prep_time": {
+                                    "description": "Update one recipe",
+                                    "type": "integer",
+                                    "example": 60
+                                },
+                                "vegetarian": {
+                                    "description": "Update one recipe",
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The updated recipe",
+                        "schema": {
+                            "description": "Update one recipe",
+                            "properties": {
+                                "data": {
+                                    "description": "Update one recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/recipes/{id}/rating": {
+            "post": {
+                "tags": [
+                    "recipes"
+                ],
+                "summary": "Create a new rating for a recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "Rating payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "rating": {
+                                    "description": "Create a new rating for a recipe",
+                                    "type": "integer",
+                                    "example": 5
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "description": "Create a new rating for a recipe",
+                            "properties": {
+                                "data": {
+                                    "description": "Create a new rating for a recipe",
+                                    "type": "object",
+                                    "$ref": "#/definitions/RecipeApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get the users paginated",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Page size",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "206": {
+                        "description": "A paginated array of Users",
+                        "schema": {
+                            "properties": {
+                                "data": {
+                                    "description": "Get the users paginated",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/UserApiResponse"
+                                    }
+                                },
+                                "meta": {
+                                    "description": "Get the users paginated",
+                                    "type": "object",
+                                    "$ref": "#/definitions/Meta"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "User payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "id": {
+                                    "description": "Create a new user",
+                                    "type": "integer",
+                                    "example": 10
+                                },
+                                "username": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "jhondoe"
+                                },
+                                "email": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "john@doe.com"
+                                },
+                                "first_name": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "Jhon"
+                                },
+                                "last_name": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "Doe"
+                                },
+                                "password": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "secret"
+                                },
+                                "password_confirmation": {
+                                    "description": "Create a new user",
+                                    "type": "string",
+                                    "example": "secret"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "The created user",
+                        "schema": {
+                            "description": "Create a new user",
+                            "properties": {
+                                "data": {
+                                    "description": "Create a new user",
+                                    "type": "object",
+                                    "$ref": "#/definitions/UserApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get one user by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The recieved user",
+                        "schema": {
+                            "description": "Get one user by id",
+                            "properties": {
+                                "data": {
+                                    "description": "Get one user by id",
+                                    "type": "object",
+                                    "$ref": "#/definitions/UserApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update one user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "User payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "username": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "jhondoe"
+                                },
+                                "email": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "john@doe.com"
+                                },
+                                "first_name": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "Jhon"
+                                },
+                                "last_name": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "Doe"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The updated user",
+                        "schema": {
+                            "description": "Update one user",
+                            "properties": {
+                                "data": {
+                                    "description": "Update one user",
+                                    "type": "object",
+                                    "$ref": "#/definitions/UserApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete one user",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "An empty response",
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update one user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "payload",
+                        "in": "body",
+                        "description": "User payload",
+                        "required": true,
+                        "schema": {
+                            "properties": {
+                                "username": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "jhondoe"
+                                },
+                                "email": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "john@doe.com"
+                                },
+                                "first_name": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "Jhon"
+                                },
+                                "last_name": {
+                                    "description": "Update one user",
+                                    "type": "string",
+                                    "example": "Doe"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The updated user",
+                        "schema": {
+                            "description": "Update one user",
+                            "properties": {
+                                "data": {
+                                    "description": "Update one user",
+                                    "type": "object",
+                                    "$ref": "#/definitions/UserApiResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Powered-By": {
+                                "description": "A name of a dev guy ;)",
+                                "type": "string"
+                            },
+                            "X-Response-Time": {
+                                "description": "282.263ms",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/definitions/Error"
+                    },
+                    "404": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "Meta": {
+            "properties": {
+                "pagination": {
+                    "properties": {
+                        "total": {
+                            "type": "integer",
+                            "example": 30
+                        },
+                        "count": {
+                            "type": "integer",
+                            "example": 15
+                        },
+                        "per_page": {
+                            "type": "integer",
+                            "example": 15
+                        },
+                        "current_page": {
+                            "type": "integer",
+                            "example": 2
+                        },
+                        "total_pages": {
+                            "type": "integer",
+                            "example": 5
+                        },
+                        "links": {
+                            "properties": {
+                                "previous": {
+                                    "type": "string",
+                                    "example": "/api/v1/recipes?page=1"
+                                },
+                                "next": {
+                                    "type": "string",
+                                    "example": "/api/v1/recipes?page=3"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "Error": {
+            "description": "",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "example": "Exception"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Something went wrong"
+                },
+                "code": {
+                    "type": "string",
+                    "example": 400
+                }
+            },
+            "type": "object"
+        },
+        "Rating": {
+            "properties": {
+                "id": {
+                    "description": "Class Rating",
+                    "type": "integer",
+                    "example": 1
+                },
+                "rating": {
+                    "description": "Class Rating",
+                    "type": "integer",
+                    "example": 5
+                },
+                "created_at": {
+                    "description": "Class Rating",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                },
+                "updated_at": {
+                    "description": "Class Rating",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                }
+            },
+            "type": "object"
+        },
+        "Recipe": {
+            "properties": {
+                "id": {
+                    "description": "Class Recipe",
+                    "type": "integer",
+                    "example": 10
+                },
+                "name": {
+                    "description": "Class Recipe",
+                    "type": "string",
+                    "example": "Lorem ipsum"
+                },
+                "description": {
+                    "description": "Class Recipe",
+                    "type": "string",
+                    "example": "Lorem ipsum dolar net est"
+                },
+                "prep_time": {
+                    "description": "Class Recipe",
+                    "type": "integer",
+                    "example": 3
+                },
+                "difficulty": {
+                    "description": "Class Recipe",
+                    "type": "integer",
+                    "example": 60
+                },
+                "vegetarian": {
+                    "description": "Class Recipe",
+                    "type": "boolean",
+                    "example": true
+                },
+                "created_at": {
+                    "description": "Class Recipe",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                },
+                "updated_at": {
+                    "description": "Class Recipe",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                }
+            },
+            "type": "object"
+        },
+        "User": {
+            "properties": {
+                "id": {
+                    "description": "Class User",
+                    "type": "integer",
+                    "example": 10
+                },
+                "username": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "jhondoe"
+                },
+                "email": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "john@doe.com"
+                },
+                "first_name": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "Jhon"
+                },
+                "last_name": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "Doe"
+                },
+                "password": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "secret"
+                },
+                "created_at": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                },
+                "updated_at": {
+                    "description": "Class User",
+                    "type": "string",
+                    "example": "2018-04-01 12:00:00"
+                }
+            },
+            "type": "object"
+        },
+        "RecipeApiResponse": {
+            "properties": {
+                "id": {
+                    "description": "API Response for Recipes",
+                    "type": "integer",
+                    "example": 10
+                },
+                "name": {
+                    "description": "API Response for Recipes",
+                    "type": "string",
+                    "example": "Lorem ipsum"
+                },
+                "description": {
+                    "description": "API Response for Recipes",
+                    "type": "string",
+                    "example": "Lorem ipsum dolar net est"
+                },
+                "prep_time": {
+                    "description": "API Response for Recipes",
+                    "type": "integer",
+                    "example": 3
+                },
+                "difficulty": {
+                    "description": "API Response for Recipes",
+                    "type": "integer",
+                    "example": 60
+                },
+                "vegetarian": {
+                    "description": "API Response for Recipes",
+                    "type": "boolean",
+                    "example": true
+                },
+                "average_rating": {
+                    "description": "API Response for Recipes",
+                    "type": "flot",
+                    "example": 4.5
+                },
+                "created_at": {
+                    "description": "API Response for Recipes",
+                    "type": "string",
+                    "example": "2018-04-04T04:22:52+00:00"
+                },
+                "updated_at": {
+                    "description": "API Response for Recipes",
+                    "type": "string",
+                    "example": "2018-04-04T04:22:52+00:00"
+                }
+            },
+            "type": "object"
+        },
+        "UserApiResponse": {
+            "properties": {
+                "id": {
+                    "description": "API Response for Users",
+                    "type": "integer",
+                    "example": 10
+                },
+                "username": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "jhondoe"
+                },
+                "email": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "john@doe.com"
+                },
+                "first_name": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "Jhon"
+                },
+                "last_name": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "Doe"
+                },
+                "created_at": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "2018-04-04T04:22:52+00:00"
+                },
+                "updated_at": {
+                    "description": "API Response for Users",
+                    "type": "string",
+                    "example": "2018-04-04T04:22:52+00:00"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "securityDefinitions": {
+        "Authorization": {
+            "type": "apiKey",
+            "description": "The JWT token. Get in /api/v1/auth",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

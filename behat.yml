@@ -1,0 +1,11 @@
+default:
+  autoload:
+    '': "%paths.base%/tests/features/bootstrap"
+  suites:
+    default:
+      contexts:
+        - FeatureContext:
+            username: nofw
+            password: supersecret
+      paths:
+        - "%paths.base%/tests/features"

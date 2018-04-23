@@ -1,0 +1,106 @@
+version: '2'
+services:
+#---------------------------------------------
+# API container
+#---------------------------------------------
+  nofw.api:
+    container_name: nofw.api
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./:/app
+      - ./sock:/sock
+      - ./log/php:/var/log/php
+      - ./log/xdebug:/var/log/xdebug
+      - ./log/newrelic:/var/log/newrelic
+    links:
+      - nofw.postgres
+      - nofw.redis
+    env_file:
+      - .env
+    networks:
+      - nofw
+#---------------------------------------------
+# NGINX Container
+#---------------------------------------------
+  nofw.nginx:
+    container_name: nofw.nginx
+    build: ./docker/nginx
+    restart: unless-stopped
+    links:
+      - nofw.api
+    volumes:
+      - ./:/app
+      - ./sock:/sock
+      - ./log/nginx:/var/log/nginx
+    ports:
+      - 8080:8080
+    networks:
+      - nofw
+#---------------------------------------------
+# Postgres Container
+#---------------------------------------------
+  nofw.postgres:
+    container_name: nofw.postgres
+    image: onjin/alpine-postgres:9.5
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      LC_ALL: C.UTF-8
+      POSTGRES_USER: nofw
+      POSTGRES_PASSWORD: nofw
+      POSTGRES_DB: nofw
+    networks:
+      - nofw
+#---------------------------------------------
+# Redis Container
+#---------------------------------------------
+  nofw.redis:
+    container_name: nofw.redis
+    image: sickp/alpine-redis:3.2.2
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - ./sock:/sock
+    networks:
+      - nofw
+#-------------------------------------------------------
+# Swagger Container
+#-------------------------------------------------------
+  nofw.swagger:
+    container_name: nofw.swagger
+    image: swaggerapi/swagger-ui
+    restart: unless-stopped
+    ports:
+      - 4000:8080
+    environment:
+      SWAGGER_JSON: "/data/swagger.json"
+    links:
+      - nofw.api
+    networks:
+      - nofw
+    volumes:
+      - ./swagger.json:/data/swagger.json
+#-------------------------------------------------------
+# SonarQube Container
+#-------------------------------------------------------
+  nofw.sonarqube:
+    container_name: nofw.sonarqube
+    image: petronetto/sonarqube-alpine
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    networks:
+      - nofw
+    volumes:
+      - ./:/app
+      - ./sonar-runner.properties:/opt/sonar-scanner/conf/sonar-runner.properties
+      - ./sonar.properties:/opt/sonarqube/conf/sonar.properties
+#-------------------------------------------------------
+# Networks
+#-------------------------------------------------------
+networks:
+  nofw:
+    external: true

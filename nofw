@@ -1,0 +1,211 @@
+#!/bin/bash
+
+APP_CONTAINER_NAME=nofw.api
+SWAGGER_CONTAINER_NAME=nofw.swagger
+SWAGGER_CONTAINER_NAME=nofw.swagger
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+RESET=`tput sgr0`
+
+function help() {
+    printf "\n\n\n"
+    echo "==================================================="
+    echo "|   Available options                             |"
+    echo "==================================================="
+    echo "|${GREEN}  * init                                         ${RESET}|"
+    echo "|${RESET}  Bootstraps the dev environment for first time  ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * app [params]                                 ${RESET}|"
+    echo "|${RESET}  Run a command inside api container             ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * up                                           ${RESET}|"
+    echo "|${RESET}  Build or up the containers                     ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * migrate                                      ${RESET}|"
+    echo "|${RESET}  Run the database migrations                    ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * seed                                         ${RESET}|"
+    echo "|${RESET}  Run the database seeders                       ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * rollback                                     ${RESET}|"
+    echo "|${RESET}  Rollback the database                          ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * tests [optional params]                      ${RESET}|"
+    echo "|${RESET}  Run the unit tests                             ${RESET}|"
+    echo "|                                                 |"
+    echo "==================================================="
+    echo "|   Available endpoints                           |"
+    echo "==================================================="
+    echo "|${GREEN}    API            -> http://localhost:8080      ${RESET}|"
+    echo "|${GREEN}    API Docs       -> http://localhost:4000      ${RESET}|"
+    echo "|${GREEN}    Sonar Qube     -> http://localhost:9000      ${RESET}|"
+    echo "==================================================="
+    printf "\n\n\n"
+}
+
+function print_info {
+    printf "\n\n\n"
+    echo "***************************************************"
+    echo "${GREEN}$@${RESET}"
+    echo "***************************************************"
+    printf "\n\n\n"
+}
+
+function print_error {
+    printf "\n\n\n"
+    echo "***************************************************"
+    echo "${RED}$@${RESET}"
+    echo "***************************************************"
+    printf "\n\n\n"
+}
+
+function check_params {
+    if [[ -z "${@: -$# + 1}" ]];
+    then
+        print_error "No arguments supplied"
+        exit 1
+    fi
+}
+
+function run_inside_docker {
+    check_params $@
+    docker exec -it ${APP_CONTAINER_NAME} $@
+}
+
+function migrate {
+    run_inside_docker php vendor/bin/phinx migrate -c database/phinx.php
+}
+
+function seed {
+    run_inside_docker php vendor/bin/phinx seed:run -c database/phinx.php
+}
+
+function rollback {
+    run_inside_docker php vendor/bin/phinx rollback -c database/phinx.php -t 0
+}
+
+function run_tests {
+    print_info "Running PHPUnit Tests"
+    docker exec -it -e DB_CONNECTION=testing ${APP_CONTAINER_NAME} \
+        vendor/bin/phpunit --colors=always $@
+
+    print_info "Running Behat Tests"
+    docker exec -it ${APP_CONTAINER_NAME} \
+        vendor/bin/behat --colors
+}
+
+function create_docker_network {
+    if [ "$(docker network ls --format {{.Name}} | grep nofw)" = "" ];
+    then
+        docker network create nofw
+    fi
+}
+
+function up {
+    shift
+    create_docker_network
+    docker-compose -f docker-compose.yml up -d
+}
+
+function init {
+    if [ ! -f .env ];
+    then
+        cp .env.example .env
+    fi
+    {
+        print_info "Building containers."
+        up
+    } || {
+        print_error "Something went wrong while building the conainer. \
+        Please check if docker is installed and you internet connection."
+    }
+
+    sleep 7 # Giving some time to containers be ready
+    {
+        if [ ! -d vendor ];
+        then
+            print_info "Installing project dependencies"
+            run_inside_docker composer install -o
+        fi
+    } || {
+        print_error "Something went wrong while installing project dependencies. \
+        Please check if docker was builded correctly and you internet connection."
+    }
+    print_info "Migrating the database"
+    migrate
+
+    print_info "Seeding the database"
+    seed
+    help
+}
+
+case $1 in
+"init")
+    init
+    exit 0
+    ;;
+"app")
+    shift
+    run_inside_docker $@
+    exit 0
+    ;;
+"tests")
+    shift
+    run_tests $@
+    exit 0
+    ;;
+"migrate")
+    print_info "Migrating the database"
+    migrate
+    exit 0
+    ;;
+"seed")
+    print_info "Seeding the database"
+    seed
+    exit 0
+    ;;
+"rollback")
+    print_info "Rollbacking the database"
+    rollback
+    exit 0
+    ;;
+"docs")
+    print_info "Generating API Docs"
+    run_inside_docker \
+        ./vendor/bin/swagger ./app \
+        --output ./;
+        docker restart $SWAGGER_CONTAINER_NAME;
+    print_info "See the API docs in http://localhost:4000"
+    exit 0
+    ;;
+"sonar-runner")
+    docker exec -it nofw.sonarqube sonar-runner
+    exit 0
+    ;;
+"phpcs")
+    if [[ $2 = "--report" ]];
+    then
+        vendor/bin/phpcs --extensions=php \
+            --report-file=tests/coverage/phpcs.xml --report=xml \
+            --standard=phpcs.xml ./
+        exit 0
+    fi
+    vendor/bin/phpcs --extensions=php \
+        --standard=phpcs.xml ./
+    exit 0
+    ;;
+"up")
+    up $@
+    exit 0
+    ;;
+"nofw")
+    print_logo
+    exit 0
+    ;;
+*)
+    help
+    exit 1
+    ;;
+esac
+
+exit 0
