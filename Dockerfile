@@ -11,7 +11,7 @@ ENV BUILD_DEPS="autoconf g++ make php7-dev openssl-dev php7-pear tzdata" \
     XDEBUG_HOST=localhost \
     XDEBUG_LOG=/var/log/xdebug/xdebug.log \
 # New Relic
-    NEWRELIC_VERSION=8.0.0.204 \
+    NEWRELIC_VERSION=8.1.0.209 \
     NEWRELIC_ENABLED=0 \
     NEWRELIC_APP_NAME="PHP Application" \
     NEWRELIC_LICENSE= \
@@ -106,7 +106,7 @@ RUN set -ex; \
 	adduser -u 1000 -D -S -h /app -s /sbin/nologin -G www-data www-data; \
 # Installing New Relic Agent
     mkdir /opt && cd /opt; \
-    curl -LOk http://download.newrelic.com/php_agent/release/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz; \
+    curl -LOk http://download.newrelic.com/php_agent/archive/${NEWRELIC_VERSION}/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz; \
     gzip -dc newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz | tar xf -;\
     ./newrelic-php5-${NEWRELIC_VERSION}-linux-musl/newrelic-install install;\
 # Installing Composer
