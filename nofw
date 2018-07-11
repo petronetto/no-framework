@@ -32,6 +32,15 @@ function help() {
     echo "|${GREEN}                                                 ${RESET}|"
     echo "|${GREEN}  * tests [optional params]                      ${RESET}|"
     echo "|${RESET}  Run the unit tests                             ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * sonar-runner                                 ${RESET}|"
+    echo "|${RESET}  Run the Sonar Code Analysis                    ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * phpcs                                        ${RESET}|"
+    echo "|${RESET}  Run the code style check                       ${RESET}|"
+    echo "|${GREEN}                                                 ${RESET}|"
+    echo "|${GREEN}  * docs                                         ${RESET}|"
+    echo "|${RESET}  Generate Swagger docs                          ${RESET}|"
     echo "|                                                 |"
     echo "==================================================="
     echo "|   Available endpoints                           |"
@@ -196,10 +205,6 @@ case $1 in
     ;;
 "up")
     up $@
-    exit 0
-    ;;
-"nofw")
-    print_logo
     exit 0
     ;;
 *)
